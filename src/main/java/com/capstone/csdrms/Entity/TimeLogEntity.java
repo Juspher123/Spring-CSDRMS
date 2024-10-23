@@ -25,22 +25,22 @@ public class TimeLogEntity {
 	 private long duration;
 	 
 	 @ManyToOne
-	 @JoinColumn(name = "userId", referencedColumnName = "user_id", insertable = false, updatable = false)
-	 private AdviserEntity adviser;
+	 @JoinColumn(name = "userId", referencedColumnName = "userId", insertable = false, updatable = false)
+	 private UserEntity user;
     
 	public TimeLogEntity() {
 		super(); 
 	}
 
 	public TimeLogEntity(Long timelog_id, Long userId, OffsetDateTime loginTime, OffsetDateTime logoutTime,
-			long duration, AdviserEntity adviser) {
+			long duration, UserEntity user) {
 		super();
 		this.timelog_id = timelog_id;
 		this.userId = userId;
 		this.loginTime = loginTime;
 		this.logoutTime = logoutTime;
 		this.duration = duration;
-		this.adviser = adviser;
+		this.user = user;
 	}
 
 	public Long getTimelog_id() {
@@ -83,15 +83,14 @@ public class TimeLogEntity {
 		this.duration = duration;
 	}
 
-	public AdviserEntity getAdviser() {
-		return adviser;
+	public UserEntity getUser() {
+		return user;
 	}
 
-	public void setAdviser(AdviserEntity adviser) {
-		this.adviser = adviser;
+	public void setUser(UserEntity user) {
+		this.user = user;
 	}
 
-	
 	
     
 }

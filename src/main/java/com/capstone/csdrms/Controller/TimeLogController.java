@@ -58,8 +58,8 @@ public class TimeLogController {
         return ResponseEntity.ok(timeLog); 
     }
     
-    @GetMapping("/getAllTimelogsByAdviser/{userId}")
-    public List<TimeLogEntity> getAllTimelogsByAdviser(@PathVariable Long userId){
-    	return timeLogService.getAllTimelogsByAdviser(userId);
+    @GetMapping("/getAllTimelogsByUser/{userId}")
+    public List<TimeLogEntity> getAllTimelogsByUser(@PathVariable Long userId){
+    	return timeLogService.getAllTimelogsByUser(userId);
     }
 }

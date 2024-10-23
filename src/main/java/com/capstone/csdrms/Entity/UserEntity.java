@@ -1,48 +1,59 @@
 package com.capstone.csdrms.Entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Table;
 
-@MappedSuperclass
-public abstract class User {
+@Entity
+@Table(name="tbluser")
+public class UserEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_id")
-	private Long uid;
+	private Long userId;
 	
 	private String username;
 	private String password;
 	private String firstname;
 	private String lastname;
 	private String email;
+	
 	private int userType;
 	
-	public User() {
+	// Fields specific to Adviser, left null for others
+    private Integer grade;
+    private String section;
+    private String schoolYear;
+    
+	public UserEntity() {
 		super();
-	} 
+	}
 
-	public User(Long uid, String username, String password, String firstname, String lastname, String email,
-			int userType) {
+	public UserEntity(Long userId, String username, String password, String firstname, String lastname, String email,
+			int userType, Integer grade, String section, String schoolYear) {
 		super();
-		this.uid = uid;
+		this.userId = userId;
 		this.username = username;
 		this.password = password;
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.email = email;
 		this.userType = userType;
+		this.grade = grade;
+		this.section = section;
+		this.schoolYear = schoolYear;
 	}
 
-	public Long getUid() {
-		return uid;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setUid(Long uid) {
-		this.uid = uid;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public String getUsername() {
@@ -92,6 +103,30 @@ public abstract class User {
 	public void setUserType(int userType) {
 		this.userType = userType;
 	}
+
+	public Integer getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Integer grade) {
+		this.grade = grade;
+	}
+
+	public String getSection() {
+		return section;
+	}
+
+	public void setSection(String section) {
+		this.section = section;
+	}
+
+	public String getSchoolYear() {
+		return schoolYear;
+	}
+
+	public void setSchoolYear(String schoolYear) {
+		this.schoolYear = schoolYear;
+	}
+
 	
-	 
 }

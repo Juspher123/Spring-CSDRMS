@@ -15,15 +15,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.capstone.csdrms.Entity.CaseEntity;
-import com.capstone.csdrms.Entity.FeedbackEntity;
 import com.capstone.csdrms.Entity.FollowupEntity;
 import com.capstone.csdrms.Entity.SuspensionEntity;
 import com.capstone.csdrms.Entity.StudentEntity;
 import com.capstone.csdrms.Entity.StudentRecordEntity;
 import com.capstone.csdrms.Repository.CaseRepository;
-import com.capstone.csdrms.Repository.FeedbackRepository;
 import com.capstone.csdrms.Repository.FollowupRepository;
 import com.capstone.csdrms.Repository.SuspensionRepository;
 import com.capstone.csdrms.Repository.StudentRecordRepository;
@@ -40,8 +37,6 @@ public class StudentService {
 	@Autowired
 	StudentRecordRepository studentrepo;
 	
-	@Autowired
-	FeedbackRepository feedbackrepo;
 	
 	@Autowired
 	CaseRepository caserepo;

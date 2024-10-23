@@ -5,18 +5,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
-
-import com.capstone.csdrms.Entity.AdviserEntity;
 import com.capstone.csdrms.Entity.ReportEntity;
 import com.capstone.csdrms.Entity.StudentEntity;
 import com.capstone.csdrms.Entity.StudentRecordEntity;
-import com.capstone.csdrms.Repository.AdviserRepository;
+import com.capstone.csdrms.Entity.UserEntity;
 import com.capstone.csdrms.Repository.ReportRepository;
 import com.capstone.csdrms.Repository.StudentRecordRepository;
 import com.capstone.csdrms.Repository.StudentRepository;
+import com.capstone.csdrms.Repository.UserRepository;
 
 @Service 
-public class ReportService {
+public class ReportService { 
 	
 	@Autowired
 	ReportRepository reportRepository;
@@ -24,9 +23,9 @@ public class ReportService {
 	@Autowired
     StudentRepository studentRepository;
 
-    @Autowired
-    AdviserRepository adviserRepository;
-    
+	@Autowired
+	UserRepository userRepository;
+	
     @Autowired
     StudentRecordRepository studentRecordRepository;
 	
@@ -38,13 +37,13 @@ public class ReportService {
 
         StudentEntity student = studentOptional.get();
 
-        Optional<AdviserEntity> adviserOptional = adviserRepository.findByGradeAndSectionAndSchoolYear(student.getGrade(),student.getSection(), student.getSchoolYear());
+        Optional<UserEntity> adviserOptional = userRepository.findByGradeAndSectionAndSchoolYear(student.getGrade(),student.getSection(), student.getSchoolYear());
         if (adviserOptional.isEmpty()) {
             throw new Exception("Adviser not found for the student's section and school year");
         }
 
-        AdviserEntity adviser = adviserOptional.get();
-        report.setAdviserId(adviser.getUid());
+        UserEntity adviser = adviserOptional.get();
+        report.setAdviserId(adviser.getUserId());
 
         // Save the report
         ReportEntity savedReport = reportRepository.save(report);
@@ -122,13 +121,13 @@ public class ReportService {
 	        StudentEntity student = studentOptional.get();
 
 	        // Retrieve the adviser based on the student's section and school year
-	        Optional<AdviserEntity> adviserOptional = adviserRepository.findByGradeAndSectionAndSchoolYear(student.getGrade(), student.getSection(), student.getSchoolYear());
+	        Optional<UserEntity> adviserOptional = userRepository.findByGradeAndSectionAndSchoolYear(student.getGrade(), student.getSection(), student.getSchoolYear());
 	        if (adviserOptional.isEmpty()) {
 	            throw new Exception("Adviser not found for the student's section and school year");
 	        }
 
-	        AdviserEntity adviser = adviserOptional.get();
-	        existingReport.setAdviserId(adviser.getUid());
+	        UserEntity adviser = adviserOptional.get();
+	        existingReport.setAdviserId(adviser.getUserId());
 	        
 	        Optional<StudentRecordEntity> studentRecordOpt = studentRecordRepository.findById(updatedReport.getRecordId());
 	        if (studentRecordOpt.isEmpty()) {

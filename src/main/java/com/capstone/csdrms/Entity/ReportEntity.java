@@ -36,39 +36,23 @@ public class ReportEntity {
     private StudentRecordEntity record;
 
     @ManyToOne
-    @JoinColumn(name = "adviserId", referencedColumnName = "user_id", insertable = false, updatable = false)
-    private AdviserEntity adviser;
+    @JoinColumn(name = "adviserId", referencedColumnName = "userId", insertable = false, updatable = false)
+    private UserEntity adviser;
     
     @ManyToOne(optional = true)
     @JoinColumn(name = "complainant", referencedColumnName = "username", insertable = false, updatable = false)
-    private SSOEntity ssoComplainant;
+    private UserEntity userComplainant;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "complainant", referencedColumnName = "username", insertable = false, updatable = false)
-    private AdviserEntity adviserComplainant;
-    
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "complainant", referencedColumnName = "username", insertable = false, updatable = false)
-    private TeacherEntity teacherComplainant;
-    
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "complainant", referencedColumnName = "username", insertable = false, updatable = false)
-    private GuidanceEntity guidanceComplainant;
-    
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "complainant", referencedColumnName = "username", insertable = false, updatable = false)
-    private PrincipalEntity principalComplainant;
     
     
     public ReportEntity() { 
     }
 
 
+
 	public ReportEntity(Long reportId, Long recordId, Long adviserId, String date, String time, String complaint,
 			String complainant, String received, String encoder, boolean complete, boolean viewedByAdviser,
-			boolean viewedBySso, StudentRecordEntity record, AdviserEntity adviser, SSOEntity ssoComplainant,
-			AdviserEntity adviserComplainant, TeacherEntity teacherComplainant, GuidanceEntity guidanceComplainant,
-			PrincipalEntity principalComplainant) {
+			boolean viewedBySso, StudentRecordEntity record, UserEntity adviser, UserEntity userComplainant) {
 		super();
 		this.reportId = reportId;
 		this.recordId = recordId;
@@ -77,19 +61,16 @@ public class ReportEntity {
 		this.time = time;
 		this.complaint = complaint;
 		this.complainant = complainant;
-		this.received = received; 
+		this.received = received;
 		this.encoder = encoder;
 		this.complete = complete;
 		this.viewedByAdviser = viewedByAdviser;
 		this.viewedBySso = viewedBySso;
 		this.record = record;
 		this.adviser = adviser;
-		this.ssoComplainant = ssoComplainant;
-		this.adviserComplainant = adviserComplainant;
-		this.teacherComplainant = teacherComplainant;
-		this.guidanceComplainant = guidanceComplainant;
-		this.principalComplainant = principalComplainant;
+		this.userComplainant = userComplainant;
 	}
+
 
 
 	public Long getReportId() {
@@ -97,9 +78,11 @@ public class ReportEntity {
 	}
 
 
+
 	public void setReportId(Long reportId) {
 		this.reportId = reportId;
 	}
+
 
 
 	public Long getRecordId() {
@@ -107,19 +90,23 @@ public class ReportEntity {
 	}
 
 
+
 	public void setRecordId(Long recordId) {
 		this.recordId = recordId;
 	}
+
 
 
 	public Long getAdviserId() {
 		return adviserId;
 	}
 
- 
+
+
 	public void setAdviserId(Long adviserId) {
 		this.adviserId = adviserId;
 	}
+
 
 
 	public String getDate() {
@@ -127,9 +114,11 @@ public class ReportEntity {
 	}
 
 
+
 	public void setDate(String date) {
 		this.date = date;
 	}
+
 
 
 	public String getTime() {
@@ -137,9 +126,11 @@ public class ReportEntity {
 	}
 
 
+
 	public void setTime(String time) {
 		this.time = time;
 	}
+
 
 
 	public String getComplaint() {
@@ -147,9 +138,11 @@ public class ReportEntity {
 	}
 
 
+
 	public void setComplaint(String complaint) {
 		this.complaint = complaint;
 	}
+
 
 
 	public String getComplainant() {
@@ -157,9 +150,11 @@ public class ReportEntity {
 	}
 
 
+
 	public void setComplainant(String complainant) {
 		this.complainant = complainant;
 	}
+
 
 
 	public String getReceived() {
@@ -167,14 +162,17 @@ public class ReportEntity {
 	}
 
 
+
 	public void setReceived(String received) {
 		this.received = received;
 	}
 
 
+
 	public String getEncoder() {
 		return encoder;
-	}
+	} 
+
 
 
 	public void setEncoder(String encoder) {
@@ -182,9 +180,11 @@ public class ReportEntity {
 	}
 
 
+
 	public boolean isComplete() {
 		return complete;
 	}
+
 
 
 	public void setComplete(boolean complete) {
@@ -192,9 +192,11 @@ public class ReportEntity {
 	}
 
 
+
 	public boolean isViewedByAdviser() {
 		return viewedByAdviser;
 	}
+
 
 
 	public void setViewedByAdviser(boolean viewedByAdviser) {
@@ -202,9 +204,11 @@ public class ReportEntity {
 	}
 
 
+
 	public boolean isViewedBySso() {
 		return viewedBySso;
 	}
+
 
 
 	public void setViewedBySso(boolean viewedBySso) {
@@ -212,9 +216,11 @@ public class ReportEntity {
 	}
 
 
+
 	public StudentRecordEntity getRecord() {
 		return record;
 	}
+
 
 
 	public void setRecord(StudentRecordEntity record) {
@@ -222,63 +228,27 @@ public class ReportEntity {
 	}
 
 
-	public AdviserEntity getAdviser() {
+
+	public UserEntity getAdviser() {
 		return adviser;
 	}
 
 
-	public void setAdviser(AdviserEntity adviser) {
+
+	public void setAdviser(UserEntity adviser) {
 		this.adviser = adviser;
 	}
 
 
-	public SSOEntity getSsoComplainant() {
-		return ssoComplainant;
+
+	public UserEntity getUserComplainant() {
+		return userComplainant;
 	}
 
 
-	public void setSsoComplainant(SSOEntity ssoComplainant) {
-		this.ssoComplainant = ssoComplainant;
-	}
 
-
-	public AdviserEntity getAdviserComplainant() {
-		return adviserComplainant;
-	}
-
-
-	public void setAdviserComplainant(AdviserEntity adviserComplainant) {
-		this.adviserComplainant = adviserComplainant;
-	}
-
-
-	public TeacherEntity getTeacherComplainant() {
-		return teacherComplainant;
-	}
-
-
-	public void setTeacherComplainant(TeacherEntity teacherComplainant) {
-		this.teacherComplainant = teacherComplainant;
-	}
-
-
-	public GuidanceEntity getGuidanceComplainant() {
-		return guidanceComplainant;
-	}
-
-
-	public void setGuidanceComplainant(GuidanceEntity guidanceComplainant) {
-		this.guidanceComplainant = guidanceComplainant;
-	}
-
-
-	public PrincipalEntity getPrincipalComplainant() {
-		return principalComplainant;
-	}
-
-
-	public void setPrincipalComplainant(PrincipalEntity principalComplainant) {
-		this.principalComplainant = principalComplainant;
+	public void setUserComplainant(UserEntity userComplainant) {
+		this.userComplainant = userComplainant;
 	}
     
     

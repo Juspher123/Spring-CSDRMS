@@ -43,7 +43,7 @@ public class TimeLogService {
         return timeLogRepository.findFirstByUserIdOrderByLoginTimeDesc(userId);
     }
     
-    public List<TimeLogEntity> getAllTimelogsByAdviser(Long userId){
+    public List<TimeLogEntity> getAllTimelogsByUser(Long userId){
     	return timeLogRepository.findAllByUserId(userId);
     }
 }
