@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import com.capstone.csdrms.Entity.TimeLogEntity;
 import com.capstone.csdrms.Repository.TimeLogRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class TimeLogService {
 
@@ -45,5 +47,10 @@ public class TimeLogService {
     
     public List<TimeLogEntity> getAllTimelogsByUser(Long userId){
     	return timeLogRepository.findAllByUserId(userId);
+    }
+    
+    @Transactional 
+    public void deleteAllTimeLogsByUser(Long userId) {
+    	 timeLogRepository.deleteAllByUserId(userId);
     }
 }

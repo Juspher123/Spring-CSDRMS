@@ -27,21 +27,21 @@ import com.capstone.csdrms.Service.StudentRecordService;
 public class StudentRecordController {
  
 	 @Autowired
-	StudentRecordService sserv;
+	StudentRecordService studentRecordService;
 	
 	@PostMapping("/insertRecord")
 	public StudentRecordEntity insertStudentRecord(@RequestBody StudentRecordEntity studentRecord) {
-		return sserv.insertStudentRecord(studentRecord);
+		return studentRecordService.insertStudentRecord(studentRecord);
 	}
 	
 	@GetMapping("/getAllStudentRecords")
 	public List<StudentRecordEntity> getAllStudentRecords(){
-		return sserv.getAllStudentRecords();
+		return studentRecordService.getAllStudentRecords();
 	}
 
 	@GetMapping("/getStudentRecords/{sid}")
 	public List<StudentRecordEntity> getStudentRecordsBySid(@PathVariable String sid){
-		return sserv.getStudentRecordsBySid(sid);
+		return studentRecordService.getStudentRecordsBySid(sid);
 	}
 	
 	@PutMapping("/update/{recordId}")
@@ -50,7 +50,7 @@ public class StudentRecordController {
             @RequestBody StudentRecordEntity updatedRecord) {
         try {
             // Call the service to update the student record
-            StudentRecordEntity updated = sserv.updateStudentRecord(recordId, updatedRecord);
+            StudentRecordEntity updated = studentRecordService.updateStudentRecord(recordId, updatedRecord);
             return new ResponseEntity<>(updated, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);  // Handle not found or other exceptions
@@ -67,14 +67,21 @@ public class StudentRecordController {
 //		return sserv.updateStudentReport(rid, newStudentReportDetails);
 //	}
 //	
-	@DeleteMapping("/deleteStudentRecord/{rid}")
-	public String deleteStudentRecord(@PathVariable Long rid) {
-		return sserv.deleteStudentRecord(rid);
-	}
+	 @DeleteMapping("/delete/{recordId}")
+	    public ResponseEntity<String> deleteStudentRecord(@PathVariable Long recordId) {
+	        try {
+	        	studentRecordService.deleteStudentRecord(recordId);
+	            return ResponseEntity.ok("Student record deleted successfully.");
+	        } catch (RuntimeException e) {
+	            return ResponseEntity.status(404).body(e.getMessage());
+	        } catch (Exception e) {
+	            return ResponseEntity.status(500).body("An error occurred while deleting the student record.");
+	        }
+	    }
 	
 	@GetMapping("/getStudentRecordsByAdviser")
 	public List<StudentRecordEntity> getAllStudentRecordsByAdviser(@RequestParam int grade, @RequestParam String section,@RequestParam String schoolYear ) {
-	    return sserv.getAllStudentRecordsByAdviser(grade, section, schoolYear);
+	    return studentRecordService.getAllStudentRecordsByAdviser(grade, section, schoolYear);
 	}
 	
 }

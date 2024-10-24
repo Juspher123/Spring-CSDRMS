@@ -25,5 +25,9 @@ public interface ReportRepository  extends JpaRepository<ReportEntity, Long> {
 	@Query("SELECT r FROM ReportEntity r WHERE r.complainant != :complainant")
     List<ReportEntity> findReportsExcludingComplainant(@Param("complainant") String complainant);
 	
+	void deleteAllByComplainant(String complainant);
+	
+	ReportEntity findByRecordId(Long recordId);
+	
 
 }

@@ -43,10 +43,10 @@ public class UserController {
         return userService.getAllUsers();
     }
     
-    @PutMapping("/updateUser/{userId}")
-    public ResponseEntity<UserEntity> updateUser(@PathVariable Long userId, @RequestBody UserEntity updatedUser) {
+    @PutMapping("/updateUser/{userId}/{initiator}")
+    public ResponseEntity<UserEntity> updateUser(@PathVariable Long userId, @RequestBody UserEntity updatedUser, @PathVariable Long initiator) {
         
-        UserEntity updatedUserEntity = userService.updateUser(userId, updatedUser);
+        UserEntity updatedUserEntity = userService.updateUser(userId, updatedUser, initiator);
         return ResponseEntity.ok(updatedUserEntity);
     }
     

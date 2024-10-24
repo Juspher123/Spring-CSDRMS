@@ -8,11 +8,15 @@ import java.util.Optional;
 import com.capstone.csdrms.Entity.ReportEntity;
 import com.capstone.csdrms.Entity.StudentEntity;
 import com.capstone.csdrms.Entity.StudentRecordEntity;
+import com.capstone.csdrms.Entity.SuspensionEntity;
 import com.capstone.csdrms.Entity.UserEntity;
 import com.capstone.csdrms.Repository.ReportRepository;
 import com.capstone.csdrms.Repository.StudentRecordRepository;
 import com.capstone.csdrms.Repository.StudentRepository;
+import com.capstone.csdrms.Repository.SuspensionRepository;
 import com.capstone.csdrms.Repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service 
 public class ReportService { 
@@ -28,8 +32,14 @@ public class ReportService {
 	
     @Autowired
     StudentRecordRepository studentRecordRepository;
+    
+    @Autowired
+    SuspensionRepository suspensionRepository;
+    
+    @Autowired
+    ActivityLogService activityLogService;
 	
-    public ReportEntity insertReport(Long id, ReportEntity report) throws Exception {
+    public ReportEntity insertReport(Long id, ReportEntity report, Long initiator) throws Exception {
         Optional<StudentEntity> studentOptional = studentRepository.findById(id);
         if (studentOptional.isEmpty()) {
             throw new Exception("Student not found");
@@ -65,6 +75,10 @@ public class ReportService {
         savedReport.setRecordId(savedStudentRecord.getRecordId());
         
         reportRepository.save(savedReport);
+        
+        Optional<UserEntity> optionalUser1 = userRepository.findById(initiator);
+        UserEntity user = optionalUser1.get();
+        activityLogService.logActivity("Create Report", "Report ID " + savedReport.getReportId() + " created by User "+ user.getUsername(), initiator);
 
         return savedReport;
     }
@@ -78,6 +92,7 @@ public class ReportService {
         if (reportOpt.isPresent()) {
             ReportEntity report = reportOpt.get();
             report.setComplete(true);  // Mark the report as complete
+            activityLogService.logActivity("Complete Report", "Report ID " + reportId + " completed by SSO", Long.valueOf(1));
             return reportRepository.save(report);  // Save the updated entity
         } else {
             throw new Exception("Report not found with ID: " + reportId);
@@ -107,7 +122,7 @@ public class ReportService {
         return reportRepository.findReportsExcludingComplainant(complainant);
     }
 	
-	public ReportEntity updateReport(Long reportId, Long id, String monitored_record ,ReportEntity updatedReport) throws Exception {
+	public ReportEntity updateReport(Long reportId, Long id, String monitored_record ,ReportEntity updatedReport, Long initiator) throws Exception {
 	    Optional<ReportEntity> existingReportOpt = reportRepository.findById(reportId);
 	    if (existingReportOpt.isPresent()) {
 	        ReportEntity existingReport = existingReportOpt.get();
@@ -146,6 +161,10 @@ public class ReportService {
 	        existingReport.setReceived(null);
 	        existingReport.setViewedByAdviser(false);
 	        existingReport.setViewedBySso(false);
+	        
+	        Optional<UserEntity> optionalUser1 = userRepository.findById(initiator);
+	        UserEntity user = optionalUser1.get();
+	        activityLogService.logActivity("Modify Report", "Report ID " + reportId + " modifed by User "+ user.getUsername(), initiator);
 
 	        // Save and return the updated report
 	        return reportRepository.save(existingReport);
@@ -178,6 +197,42 @@ public class ReportService {
 		reports.forEach(report -> report.setViewedByAdviser(true));
 		reportRepository.saveAll(reports);
 	}
+	
+	 public void deleteReport(Long reportId, Long initiator) {
+		 boolean suspensionExist = false;
+	        // Find any existing suspensions associated with the report
+	        Optional<SuspensionEntity> suspension = suspensionRepository.findByReportId(reportId);
+	        if (suspension.isPresent()) {
+	            // If found, delete the suspension first
+	            suspensionRepository.delete(suspension.get());
+	            suspensionExist = true;
+	        }
+
+	        // Now delete the report
+	        Optional<ReportEntity> report = reportRepository.findById(reportId);
+	        if (report.isPresent()) {    	
+	        	
+	            reportRepository.delete(report.get());
+	            Optional<StudentRecordEntity> studentRecord = studentRecordRepository.findById(report.get().getRecordId());
+	        	 if (studentRecord.isPresent()) {
+	 	            studentRecordRepository.delete(studentRecord.get());
+	        	 }
+	            
+	            
+	            Optional<UserEntity> optionalUser1 = userRepository.findById(initiator);
+	            UserEntity user = optionalUser1.get();
+	            String logMessage = "Report ID " + reportId + (suspensionExist ? " and its suspension" : "") + " deleted by User " + user.getUsername() + " along with the associated record";
+	            activityLogService.logActivity("Delete Report", logMessage, initiator);
+	        } else {
+	            throw new RuntimeException("Report not found for id: " + reportId);
+	        }
+	    }
+	 
+	 @Transactional
+	 public void deleteAllReportsByComplainant(String complainant) {
+		 suspensionRepository.deleteAllByReportEntity_Complainant(complainant);
+		 reportRepository.deleteAllByComplainant(complainant);
+	 }
 	
 
 

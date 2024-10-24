@@ -26,7 +26,7 @@ import jakarta.transaction.Transactional;
 public class SuspensionService {
 	
 	@Autowired
-	SuspensionRepository srepo;
+	SuspensionRepository suspensionRepository;
 	
 	@Autowired
 	StudentRecordRepository studentRecordRepository;
@@ -49,9 +49,13 @@ public class SuspensionService {
 	    	ReportEntity reportEntity = reportOptional.get();
 	        // Set the CaseEntity in the sanction
 	    	suspension.setReportEntity(reportEntity);
+	    	
+	    	 reportEntity.setComplete(true);
+	    	 
+	    	 reportRepository.save(reportEntity);
 	        
 	        // Save the sanction entity
-	        SuspensionEntity savedSanction = srepo.save(suspension);
+	        SuspensionEntity savedSanction = suspensionRepository.save(suspension);
 	        
 	        // Automatically insert a student report after the sanction is added
 	        insertStudentRecordFromSanction(savedSanction);
@@ -83,64 +87,75 @@ public class SuspensionService {
 	    
 	    
 	public List<SuspensionEntity> getAllSuspensions(){
-		return srepo.findAll();
+		return suspensionRepository.findAll();
 	}
 	
 	public List<SuspensionEntity> getAllSuspensionsByStudentId(Long id){
-		return srepo.findByReportEntity_Record_Student_Id(id);
+		return suspensionRepository.findByReportEntity_Record_Student_Id(id);
 	}
 	
 	public List<SuspensionEntity> getAllSuspensionsByGradeSectionAndSchoolYear(int grade, String section, String schoolYear){
-		return srepo.findAllByReportEntity_Record_Student_GradeAndReportEntity_Record_Student_SectionAndReportEntity_Record_Student_SchoolYear(grade, section, schoolYear);
+		return suspensionRepository.findAllByReportEntity_Record_Student_GradeAndReportEntity_Record_Student_SectionAndReportEntity_Record_Student_SchoolYear(grade, section, schoolYear);
 	}
 	
 	public List<SuspensionEntity> getAllSuspensionByComplainant(String username){
-		return srepo.findAllByReportEntity_Complainant(username);
+		return suspensionRepository.findAllByReportEntity_Complainant(username);
 	}
 	
 	public List<SuspensionEntity> getAllUnviewedSuspensionsForSso(){
-		return srepo.findAllByViewedBySsoFalse();
+		return suspensionRepository.findAllByViewedBySsoFalse();
 	}
 	
 	public List<SuspensionEntity> getAllUnviewedSuspensionsForPrincipal(){
-		return srepo.findAllByViewedByPrincipalFalse();
+		return suspensionRepository.findAllByViewedByPrincipalFalse();
 	}
 	
 	public List<SuspensionEntity> getAllUnviewedSuspensionsForAdviser(int grade, String section, String schoolYear){
-		return srepo.findAllByReportEntity_Record_Student_GradeAndReportEntity_Record_Student_SectionAndReportEntity_Record_Student_SchoolYearAndViewedByAdviserFalse(grade, section, schoolYear);
+		return suspensionRepository.findAllByReportEntity_Record_Student_GradeAndReportEntity_Record_Student_SectionAndReportEntity_Record_Student_SchoolYearAndViewedByAdviserFalse(grade, section, schoolYear);
 	}
 	
 	public List<SuspensionEntity> getAllUnviewedSuspensionsForComplainant(String username){
-		return srepo.findAllByReportEntity_ComplainantAndViewedByComplainantFalse(username);
+		return suspensionRepository.findAllByReportEntity_ComplainantAndViewedByComplainantFalse(username);
 	}
 	
 	 public void markSuspensionsAsViewedForSso() {
-	        List<SuspensionEntity> suspensions = srepo.findAllByViewedBySsoFalse();
+	        List<SuspensionEntity> suspensions = suspensionRepository.findAllByViewedBySsoFalse();
 	        suspensions.forEach(suspension -> suspension.setViewedBySso(true));
-	        srepo.saveAll(suspensions);
+	        suspensionRepository.saveAll(suspensions);
 	 }
 	 
 	 public void markSuspensionsAsViewedForPrincipal() {
-	        List<SuspensionEntity> suspensions = srepo.findAllByViewedByPrincipalFalse();
+	        List<SuspensionEntity> suspensions = suspensionRepository.findAllByViewedByPrincipalFalse();
 	        suspensions.forEach(suspension -> suspension.setViewedByPrincipal(true));
-	        srepo.saveAll(suspensions);
+	        suspensionRepository.saveAll(suspensions);
 	 }
 	 
 	 public void markSuspensionsAsViewedForAdviser(int grade, String section, String schoolYear) {
-	        List<SuspensionEntity> suspensions = srepo.findAllByReportEntity_Record_Student_GradeAndReportEntity_Record_Student_SectionAndReportEntity_Record_Student_SchoolYearAndViewedByAdviserFalse(grade, section, schoolYear);
+	        List<SuspensionEntity> suspensions = suspensionRepository.findAllByReportEntity_Record_Student_GradeAndReportEntity_Record_Student_SectionAndReportEntity_Record_Student_SchoolYearAndViewedByAdviserFalse(grade, section, schoolYear);
 	        suspensions.forEach(suspension -> suspension.setViewedByAdviser(true));
-	        srepo.saveAll(suspensions);
+	        suspensionRepository.saveAll(suspensions);
 	 }
 	 
 	 public void markSuspensionsAsViewedForComplainant(String username) {
-		 	List<SuspensionEntity> suspensions = srepo.findAllByReportEntity_ComplainantAndViewedByComplainantFalse(username);
+		 	List<SuspensionEntity> suspensions = suspensionRepository.findAllByReportEntity_ComplainantAndViewedByComplainantFalse(username);
 	        suspensions.forEach(suspension -> suspension.setViewedByComplainant(true));
-	        srepo.saveAll(suspensions);
+	        suspensionRepository.saveAll(suspensions);
 	 }
 	  
 	 public Optional<SuspensionEntity> getSuspensionByReportId(Long reportId) {
-	        return srepo.findByReportId(reportId);
+	        return suspensionRepository.findByReportId(reportId);
 	    }
+	 
+	 public void deleteSuspension(Long suspensionId) {
+	        Optional<SuspensionEntity> suspension = suspensionRepository.findById(suspensionId);
+	        if (suspension.isPresent()) {
+	            suspensionRepository.delete(suspension.get());
+	        } else {
+	            throw new RuntimeException("Suspension not found for id: " + suspensionId);
+	        }
+	    }
+	 
+	 
 	 
 //	public List<SuspensionEntity> getAllSanctionsById(Long id){
 //        return srepo.findAllByCaseEntity_Id(id);

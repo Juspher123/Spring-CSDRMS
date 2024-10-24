@@ -9,6 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.capstone.csdrms.Entity.UserEntity;
+import com.capstone.csdrms.Repository.ReportRepository;
+import com.capstone.csdrms.Repository.TimeLogRepository;
 import com.capstone.csdrms.Repository.UserRepository;
 
 import jakarta.persistence.EntityManager;
@@ -21,6 +23,18 @@ public class UserService {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	ReportService reportService;
+	
+	
+	@Autowired
+	TimeLogService timeLogService;
+	
+	@Autowired
+	ActivityLogService activityLogService;
+	
+	
 	
 	
 	
@@ -54,8 +68,9 @@ public class UserService {
 	        String encryptedPassword = bcrypt.encode(user.getPassword());
 	        user.setPassword(encryptedPassword);
 
-	       
+	        
 	            userRepository.save(user);
+	            activityLogService.logActivity("Register User", "User " + user.getUsername() + " registered by Admin", Long.valueOf(4));
 	    }
 	
 	public List<UserEntity> getAllUsers() {
@@ -63,7 +78,7 @@ public class UserService {
     }
 	
 	
-	public UserEntity updateUser(Long userId, UserEntity updatedUser) {
+	public UserEntity updateUser(Long userId, UserEntity updatedUser, Long initiator) {
 		Optional<UserEntity> optionalUser = userRepository.findById(userId);
 		
 		 if (optionalUser.isPresent()) {
@@ -86,6 +101,9 @@ public class UserService {
 		            existingUser.setSchoolYear(updatedUser.getSchoolYear());
 	            }
 	            
+	            Optional<UserEntity> optionalUser1 = userRepository.findById(initiator);
+	            UserEntity user = optionalUser1.get();
+	            activityLogService.logActivity("Update User", "User " + updatedUser.getUsername() + " updated by User "+ user.getUsername(), initiator);
 
 	            // Save the updated user back to the database
 	            return userRepository.save(existingUser);
@@ -103,7 +121,10 @@ public class UserService {
 	        if (optionalUser.isPresent()) {
 	            // If the user is found, delete the user
 	            UserEntity user = optionalUser.get();
+	            timeLogService.deleteAllTimeLogsByUser(user.getUserId());
+	            reportService.deleteAllReportsByComplainant(username);
 	            userRepository.delete(user);
+	            activityLogService.logActivity("Delete User", "User " + user.getUsername() + " deleted by Admin", Long.valueOf(4));
 	        } else {
 	            // Handle case where user is not found
 	            throw new RuntimeException("User not found with username: " + username);

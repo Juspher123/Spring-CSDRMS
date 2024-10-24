@@ -7,34 +7,48 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.capstone.csdrms.Entity.ReportEntity;
 import com.capstone.csdrms.Entity.StudentRecordEntity;
+import com.capstone.csdrms.Entity.SuspensionEntity;
+import com.capstone.csdrms.Entity.UserEntity;
+import com.capstone.csdrms.Repository.ReportRepository;
 import com.capstone.csdrms.Repository.StudentRecordRepository;
+import com.capstone.csdrms.Repository.SuspensionRepository;
 
 @Service 
 public class StudentRecordService {
 
 	@Autowired
-	StudentRecordRepository srepo;
+	StudentRecordRepository studentRecordRepository;
+	
+	@Autowired
+	ReportRepository reportRepository;
+	
+	@Autowired
+	SuspensionRepository suspensionRepository;
+	
+	@Autowired
+	ActivityLogService activityLogService;
 	
 	public StudentRecordEntity insertStudentRecord(StudentRecordEntity studentRecord) {
-	    return srepo.save(studentRecord);
+	    return studentRecordRepository.save(studentRecord);
 	}
 
 	public List<StudentRecordEntity> getAllStudentRecords(){
-		return srepo.findAll();
+		return studentRecordRepository.findAll();
 	}
 	
 	public 	List<StudentRecordEntity> getAllStudentRecordsByAdviser(int grade, String section, String schoolYear){
-		return srepo.findAllByStudent_GradeAndStudent_SectionAndStudent_SchoolYear(grade, section, schoolYear);
+		return studentRecordRepository.findAllByStudent_GradeAndStudent_SectionAndStudent_SchoolYear(grade, section, schoolYear);
 	}
 	
 	public List<StudentRecordEntity> getStudentRecordsBySid(String sid) {
-		return srepo.findAllBySid(sid);
+		return studentRecordRepository.findAllBySid(sid);
 	}
 	
 	public StudentRecordEntity updateStudentRecord(Long recordId, StudentRecordEntity updatedRecord) throws Exception {
         // Fetch the existing record by its ID
-        Optional<StudentRecordEntity> existingRecordOpt = srepo.findById(recordId);
+        Optional<StudentRecordEntity> existingRecordOpt = studentRecordRepository.findById(recordId);
         if (existingRecordOpt.isPresent()) {
             StudentRecordEntity existingRecord = existingRecordOpt.get();
             
@@ -42,7 +56,7 @@ public class StudentRecordService {
             existingRecord.setSanction(updatedRecord.getSanction());
             
             // Save the updated record
-            return srepo.save(existingRecord);
+            return studentRecordRepository.save(existingRecord);
         } else {
             throw new Exception("Student record not found with ID: " + recordId);
         }
@@ -71,13 +85,35 @@ public class StudentRecordService {
 //		}
 //	}
 	
-	public String deleteStudentRecord(Long rid) {
-		StudentRecordEntity existingStudentReport = srepo.findById(rid).get();
-	    if (existingStudentReport != null) {
-	        srepo.delete(existingStudentReport);
-	        return "Student Report " + rid + " is successfully deleted!";
-	    } else {
-	        return "Student Report" + rid + " does not exist";
+	 public void deleteStudentRecord(Long recordId) {
+		 boolean suspensionExist = false;
+		 boolean reportExist = false;
+	        // Find the report associated with the student record
+	        ReportEntity report = reportRepository.findByRecordId(recordId);
+
+	        if (report != null) {
+	        	reportExist = true;
+	        	 Optional<SuspensionEntity> suspension = suspensionRepository.findByReportId(report.getReportId());
+	 	        if (suspension.isPresent()) {
+	 	            // If found, delete the suspension first
+	 	        	suspensionExist = true;
+	 	            suspensionRepository.delete(suspension.get());
+	 	        }
+	            // If a report is found, delete it
+	            reportRepository.delete(report);
+	        }
+
+	        // Now delete the student record
+	        Optional<StudentRecordEntity> studentRecord = studentRecordRepository.findById(recordId);
+	        if (studentRecord.isPresent()) {
+	            studentRecordRepository.delete(studentRecord.get());
+	      
+	            String logMessage = "Record ID " + recordId + " deleted by SSO " + (reportExist ? "along with the associated report" +(suspensionExist ? " and its suspension" : ""): "");
+	            activityLogService.logActivity("Delete Record", logMessage, Long.valueOf(1));
+	            
+	        } else {
+	            throw new RuntimeException("Student record not found for id: " + recordId);
+	        }
 	    }
-	}
+
 }

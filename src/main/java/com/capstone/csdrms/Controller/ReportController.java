@@ -5,8 +5,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,9 +29,9 @@ public class ReportController {
 	@Autowired
 	ReportService reportService;
 	
-	@PostMapping("/insertReport/{id}")
-	public ResponseEntity<ReportEntity> insertReport( @PathVariable("id") Long id,  @RequestBody ReportEntity report) throws Exception {
-		  ReportEntity savedReport = reportService.insertReport(id, report);
+	@PostMapping("/insertReport/{id}/{initiator}")
+	public ResponseEntity<ReportEntity> insertReport( @PathVariable("id") Long id,  @RequestBody ReportEntity report, @PathVariable Long initiator ) throws Exception {
+		  ReportEntity savedReport = reportService.insertReport(id, report, initiator);
 		   return ResponseEntity.ok(savedReport);
 	}
 	
@@ -69,14 +71,15 @@ public class ReportController {
         return reportService.getReportsExcludingComplainant(complainant);
     }
 	
-	@PutMapping("/updateReport/{reportId}/{id}/{monitored_record}")
+	@PutMapping("/updateReport/{reportId}/{id}/{monitored_record}/{initiator}")
 	public ResponseEntity<ReportEntity> updateReport(
 	    @PathVariable Long reportId, 
 	    @PathVariable String monitored_record,
 	    @PathVariable Long id,
-	    @RequestBody ReportEntity updatedReport) {
+	    @RequestBody ReportEntity updatedReport,
+	    @PathVariable Long initiator) {
 	    try {
-	        ReportEntity report = reportService.updateReport(reportId, id, monitored_record, updatedReport);
+	        ReportEntity report = reportService.updateReport(reportId, id, monitored_record, updatedReport, initiator);
 	        return ResponseEntity.ok(report);
 	    } catch (Exception e) {
 	        return ResponseEntity.badRequest().body(null);
@@ -109,6 +112,28 @@ public class ReportController {
     public void markReportsAsViewedForAdviser(@RequestParam int grade, @RequestParam String section, @RequestParam String schoolYear) {
 		reportService.markReportsAsViewedForAdviser(grade, section, schoolYear);
     }
+	
+	@DeleteMapping("/delete/{reportId}/{initiator}")
+    public ResponseEntity<String> deleteReport(@PathVariable Long reportId,@PathVariable Long initiator) {
+        try {
+            reportService.deleteReport(reportId,initiator);
+            return ResponseEntity.ok("Report and associated suspensions deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+	
+	@DeleteMapping("/complainant/{complainant}")
+    public ResponseEntity<String> deleteReportsByComplainant(@PathVariable String complainant) {
+        try {
+            reportService.deleteAllReportsByComplainant(complainant);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Reports deleted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Error deleting reports: " + e.getMessage());
+        }
+    }
+
 
 	
 }
