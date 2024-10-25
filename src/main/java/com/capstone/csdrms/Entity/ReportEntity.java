@@ -27,6 +27,7 @@ public class ReportEntity {
     private String complainant;
     private String received;
     private String encoder;  
+    private String comment;
     private boolean complete;
     private boolean viewedByAdviser;
 	private boolean viewedBySso;
@@ -51,8 +52,9 @@ public class ReportEntity {
 
 
 	public ReportEntity(Long reportId, Long recordId, Long adviserId, String date, String time, String complaint,
-			String complainant, String received, String encoder, boolean complete, boolean viewedByAdviser,
-			boolean viewedBySso, StudentRecordEntity record, UserEntity adviser, UserEntity userComplainant) {
+			String complainant, String received, String encoder, String comment, boolean complete,
+			boolean viewedByAdviser, boolean viewedBySso, StudentRecordEntity record, UserEntity adviser,
+			UserEntity userComplainant) {
 		super();
 		this.reportId = reportId;
 		this.recordId = recordId;
@@ -63,6 +65,7 @@ public class ReportEntity {
 		this.complainant = complainant;
 		this.received = received;
 		this.encoder = encoder;
+		this.comment = comment;
 		this.complete = complete;
 		this.viewedByAdviser = viewedByAdviser;
 		this.viewedBySso = viewedBySso;
@@ -171,12 +174,24 @@ public class ReportEntity {
 
 	public String getEncoder() {
 		return encoder;
-	} 
+	}
 
 
 
 	public void setEncoder(String encoder) {
 		this.encoder = encoder;
+	}
+
+
+
+	public String getComment() {
+		return comment;
+	}
+
+
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 
@@ -233,7 +248,7 @@ public class ReportEntity {
 		return adviser;
 	}
 
-
+ 
 
 	public void setAdviser(UserEntity adviser) {
 		this.adviser = adviser;
@@ -250,8 +265,7 @@ public class ReportEntity {
 	public void setUserComplainant(UserEntity userComplainant) {
 		this.userComplainant = userComplainant;
 	}
-    
-    
+ 
     
 }
 	

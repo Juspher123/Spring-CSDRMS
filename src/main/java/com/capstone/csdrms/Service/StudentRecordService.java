@@ -31,7 +31,9 @@ public class StudentRecordService {
 	ActivityLogService activityLogService;
 	
 	public StudentRecordEntity insertStudentRecord(StudentRecordEntity studentRecord) {
-	    return studentRecordRepository.save(studentRecord);
+		StudentRecordEntity savedRecord = studentRecordRepository.save(studentRecord);
+		activityLogService.logActivity("Insert Student Record", "A new record has been inserted by SSO for student " + savedRecord.getSid() + " (" +savedRecord.getStudent().getName()+")", Long.valueOf(1));
+		return savedRecord;
 	}
 
 	public List<StudentRecordEntity> getAllStudentRecords(){
@@ -56,6 +58,7 @@ public class StudentRecordService {
             existingRecord.setSanction(updatedRecord.getSanction());
             
             // Save the updated record
+            activityLogService.logActivity("Update Record", "Record " + recordId + " updated by SSO", Long.valueOf(1));
             return studentRecordRepository.save(existingRecord);
         } else {
             throw new Exception("Student record not found with ID: " + recordId);

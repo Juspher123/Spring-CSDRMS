@@ -41,9 +41,9 @@ public class ReportController {
 	}
 	
 	@PutMapping("/complete/{id}")
-    public ResponseEntity<ReportEntity> completeReport(@PathVariable("id") Long reportId) {
+    public ResponseEntity<ReportEntity> completeReport(@PathVariable("id") Long reportId, @RequestParam String comment) {
         try {
-            ReportEntity completedReport = reportService.completeReport(reportId);
+            ReportEntity completedReport = reportService.completeReport(reportId, comment);
             return ResponseEntity.ok(completedReport);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);

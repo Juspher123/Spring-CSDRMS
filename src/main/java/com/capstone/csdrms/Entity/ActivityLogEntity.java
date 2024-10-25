@@ -20,10 +20,9 @@ public class ActivityLogEntity {
 	private String action;
 	private String description;
 	private LocalDateTime timestamp;
-	private Long userId;
+	private Long userId; 
 	
-	
-
+ 
 	public ActivityLogEntity() {
 		super();
 	}
@@ -34,7 +33,7 @@ public class ActivityLogEntity {
 		this.timestamp = timestamp;
 		this.userId = userId;
 	}
-
+ 
 	public Long getActivitylog_id() {
 		return activitylog_id;
 	}
@@ -74,6 +73,9 @@ public class ActivityLogEntity {
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
+
+	
+	
 
 	
 	

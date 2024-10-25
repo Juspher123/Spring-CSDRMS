@@ -87,11 +87,12 @@ public class ReportService {
 		return reportRepository.findAll();
 	}
 	
-	public ReportEntity completeReport(Long reportId) throws Exception {
+	public ReportEntity completeReport(Long reportId, String comment) throws Exception {
         Optional<ReportEntity> reportOpt = reportRepository.findById(reportId);
         if (reportOpt.isPresent()) {
             ReportEntity report = reportOpt.get();
             report.setComplete(true);  // Mark the report as complete
+            report.setComment(comment);
             activityLogService.logActivity("Complete Report", "Report ID " + reportId + " completed by SSO", Long.valueOf(1));
             return reportRepository.save(report);  // Save the updated entity
         } else {

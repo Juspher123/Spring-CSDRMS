@@ -37,6 +37,9 @@ public class SuspensionService {
 	@Autowired
 	ReportRepository reportRepository;
 	
+	@Autowired
+	ActivityLogService activityLogService;
+	
 	
 	 
 
@@ -59,6 +62,7 @@ public class SuspensionService {
 	        
 	        // Automatically insert a student report after the sanction is added
 	        insertStudentRecordFromSanction(savedSanction);
+	        activityLogService.logActivity("Student Suspension", "Student " + savedSanction.getReportEntity().getRecord().getSid() + " (" +savedSanction.getReportEntity().getRecord().getStudent().getName()+")" + " has been suspended by SSO", Long.valueOf(1));
 	        
 	        return savedSanction;
 	    } else {
@@ -146,10 +150,42 @@ public class SuspensionService {
 	        return suspensionRepository.findByReportId(reportId);
 	    }
 	 
+	 @Transactional
+	 public SuspensionEntity updateSuspension(Long suspensionId, SuspensionEntity updatedSuspensionData) {
+	     Optional<SuspensionEntity> suspensionOptional = suspensionRepository.findById(suspensionId);
+
+	     if (suspensionOptional.isPresent()) {
+	         SuspensionEntity suspension = suspensionOptional.get();
+
+	         // Update suspension details
+	         suspension.setDays(updatedSuspensionData.getDays());
+	         suspension.setStartDate(updatedSuspensionData.getStartDate());
+	         suspension.setEndDate(updatedSuspensionData.getEndDate());
+	         suspension.setReturnDate(updatedSuspensionData.getReturnDate());
+	         
+	      // Reset viewed statuses for notifications
+	         suspension.setViewedByPrincipal(false);
+	         suspension.setViewedByAdviser(false);
+	         suspension.setViewedBySso(false);
+	         suspension.setViewedByComplainant(false);
+	         
+	         // Save the updated suspension
+	         SuspensionEntity savedSuspension = suspensionRepository.save(suspension);
+	         
+	         activityLogService.logActivity("Update Suspension", "Suspension " + suspensionId + " updated by SSO", Long.valueOf(1));
+
+	         return savedSuspension;
+	     } else {
+	         throw new RuntimeException("Suspension not found for id: " + suspensionId);
+	     }
+	 }
+
+	 
 	 public void deleteSuspension(Long suspensionId) {
 	        Optional<SuspensionEntity> suspension = suspensionRepository.findById(suspensionId);
 	        if (suspension.isPresent()) {
 	            suspensionRepository.delete(suspension.get());
+	            activityLogService.logActivity("Lift Suspension", "Suspension " + suspensionId + " has been lifted by SSO", Long.valueOf(1));
 	        } else {
 	            throw new RuntimeException("Suspension not found for id: " + suspensionId);
 	        }
