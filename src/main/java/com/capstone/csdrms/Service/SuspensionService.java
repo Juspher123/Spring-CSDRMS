@@ -166,7 +166,6 @@ public class SuspensionService {
 	      // Reset viewed statuses for notifications
 	         suspension.setViewedByPrincipal(false);
 	         suspension.setViewedByAdviser(false);
-	         suspension.setViewedBySso(false);
 	         suspension.setViewedByComplainant(false);
 	         
 	         // Save the updated suspension
