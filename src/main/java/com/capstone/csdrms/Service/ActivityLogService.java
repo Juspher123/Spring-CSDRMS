@@ -31,5 +31,9 @@ public class ActivityLogService {
 	public List<ActivityLogEntity> getAllActivityLogs(){
 		return activityLogRepository.findAll();
 	}
+	
+	public List<ActivityLogEntity> getAllActivityLogsByUser(Long userId){
+		return activityLogRepository.findByUserId(userId);
+	}
 
 }

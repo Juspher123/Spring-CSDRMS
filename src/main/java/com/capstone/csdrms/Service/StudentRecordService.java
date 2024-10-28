@@ -8,12 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.capstone.csdrms.Entity.ReportEntity;
+import com.capstone.csdrms.Entity.StudentEntity;
 import com.capstone.csdrms.Entity.StudentRecordEntity;
 import com.capstone.csdrms.Entity.SuspensionEntity;
 import com.capstone.csdrms.Entity.UserEntity;
 import com.capstone.csdrms.Repository.ReportRepository;
 import com.capstone.csdrms.Repository.StudentRecordRepository;
+import com.capstone.csdrms.Repository.StudentRepository;
 import com.capstone.csdrms.Repository.SuspensionRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service 
 public class StudentRecordService {
@@ -28,11 +32,18 @@ public class StudentRecordService {
 	SuspensionRepository suspensionRepository;
 	
 	@Autowired
+	StudentRepository studentRepositry;
+	
+	
+	@Autowired
 	ActivityLogService activityLogService;
+	
 	
 	public StudentRecordEntity insertStudentRecord(StudentRecordEntity studentRecord) {
 		StudentRecordEntity savedRecord = studentRecordRepository.save(studentRecord);
-		activityLogService.logActivity("Insert Student Record", "A new record has been inserted by SSO for student " + savedRecord.getSid() + " (" +savedRecord.getStudent().getName()+")", Long.valueOf(1));
+		Optional<StudentEntity> optionalStudent = studentRepositry.findById(savedRecord.getId());
+		StudentEntity student = optionalStudent.get();
+		activityLogService.logActivity("Insert Student Record", "A new record has been inserted by SSO for student " + student.getSid() + " (" +student.getName()+")", Long.valueOf(1));
 		return savedRecord;
 	}
 
