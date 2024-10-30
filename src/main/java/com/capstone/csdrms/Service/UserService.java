@@ -131,6 +131,18 @@ public class UserService {
 	        }
 	    }
 	 
+	 public UserEntity getPrincipal() {
+		 Optional<UserEntity> optionalPrincipal = userRepository.findByUserType(2);
+				 if (optionalPrincipal.isPresent()) {
+					 UserEntity principal = optionalPrincipal.get();
+					 return principal;
+				 }
+				 else {
+			            // Handle case where user is not found
+			            throw new RuntimeException("User Principal not found");
+			        }
+	 }
+	 
 //	 public Optional<AdviserEntity> getAdviser(int grade, String section, String schoolYear) {
 //		 return adviserRepository.findByGradeAndSectionAndSchoolYear(grade, section, schoolYear);
 //	 }

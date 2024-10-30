@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,7 +55,18 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable String username) {
         userService.deleteUser(username);
         return ResponseEntity.noContent().build(); // HTTP 204 No Content response on successful deletion
-    }  
+    } 
+    
+    @GetMapping("/getPrincipal")
+    public ResponseEntity<UserEntity> getPrincipal() {
+        try {
+            UserEntity principal = userService.getPrincipal();
+            return ResponseEntity.ok(principal);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body(null); // or include a custom error message if needed
+        }
+    }
     
     
 //    @GetMapping("/adviser")
