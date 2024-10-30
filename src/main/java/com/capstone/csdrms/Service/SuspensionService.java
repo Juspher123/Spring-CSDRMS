@@ -38,7 +38,7 @@ public class SuspensionService {
 	ReportRepository reportRepository;
 	
 	@Autowired
-	ActivityLogService activityLogService;
+	ActivityLogService activityLogService; 
 	
 	
 	 

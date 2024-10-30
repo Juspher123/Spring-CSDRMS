@@ -46,7 +46,7 @@ public class TimeLogService {
 	                
 	        Optional<UserEntity> optionalUser = userRepository.findById(userId);
 	        UserEntity user = optionalUser.get();
-	        activityLogService.logActivity("User Login", "User " + user.getUsername() + " logged in at "+ formattedLoginTime, userId);
+	        activityLogService.logActivity("User Login", "User " + user.getUsername() + " logged in", userId);
 	        return timeLogRepository.save(timeLog);
 	    }
 
@@ -65,7 +65,7 @@ public class TimeLogService {
 	                
 	        Optional<UserEntity> optionalUser = userRepository.findById(timeLog.getUserId());
 	        UserEntity user = optionalUser.get();
-	        activityLogService.logActivity("User Logout", "User " + user.getUsername() + " logged out at "+ formattedLoginTime +" with total duration "+duration +" minute/s", timeLog.getUserId());
+	        activityLogService.logActivity("User Logout", "User " + user.getUsername() + " logged out", timeLog.getUserId());
 	        
 	        return timeLogRepository.save(timeLog);
 	    }
