@@ -125,6 +125,11 @@ public class SuspensionController {
         }
     }
     
+	@PostMapping("/approveSuspension")
+	public boolean approveSuspension(@RequestParam Long suspensionId) {
+		return suspensionService.approveSuspension(suspensionId);
+	} 
+    
 	
 	
 
@@ -133,10 +138,7 @@ public class SuspensionController {
 //		return sserv.getAllSanctionsById(id);
 //	}
 //	
-//	@PostMapping("/approveSanction")
-//	public boolean approveSanction(@RequestParam int sanctionId) {
-//		return sserv.approveSanction(sanctionId);
-//	} 
+
 //	
 //	@PostMapping("/declineSanction")
 //	public boolean declineSanction(@RequestParam int sanctionId) {

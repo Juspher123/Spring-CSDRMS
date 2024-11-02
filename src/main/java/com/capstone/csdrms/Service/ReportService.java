@@ -47,7 +47,7 @@ public class ReportService {
 
         StudentEntity student = studentOptional.get();
 
-        Optional<UserEntity> adviserOptional = userRepository.findByGradeAndSectionAndSchoolYear(student.getGrade(),student.getSection(), student.getSchoolYear());
+        Optional<UserEntity> adviserOptional = userRepository.findByGradeAndSectionAndSchoolYearAndDeleted(student.getGrade(),student.getSection(), student.getSchoolYear(), false);
         if (adviserOptional.isEmpty()) {
             throw new Exception("Adviser not found for the student's section and school year");
         }
@@ -60,7 +60,6 @@ public class ReportService {
 
         // Automatically create a StudentRecordEntity
         StudentRecordEntity studentRecord = new StudentRecordEntity();
-        studentRecord.setSid(student.getSid());
         studentRecord.setId(student.getId());
         studentRecord.setRecord_date(savedReport.getDate());  // Assuming ReportEntity has a date field
         studentRecord.setIncident_date(savedReport.getDate());
@@ -87,18 +86,18 @@ public class ReportService {
 		return reportRepository.findAll();
 	}
 	
-	public ReportEntity completeReport(Long reportId, String comment) throws Exception {
-        Optional<ReportEntity> reportOpt = reportRepository.findById(reportId);
-        if (reportOpt.isPresent()) {
-            ReportEntity report = reportOpt.get();
-            report.setComplete(true);  // Mark the report as complete
-            report.setComment(comment);
-            activityLogService.logActivity("Complete Report", "Report ID " + reportId + " completed by SSO", Long.valueOf(1));
-            return reportRepository.save(report);  // Save the updated entity
-        } else {
-            throw new Exception("Report not found with ID: " + reportId);
-        }
-    }
+//	public ReportEntity completeReport(Long reportId, String comment, Long initiator) throws Exception {
+//        Optional<ReportEntity> reportOpt = reportRepository.findById(reportId);
+//        if (reportOpt.isPresent()) {
+//            ReportEntity report = reportOpt.get();
+//            report.setComplete(true);  // Mark the report as complete
+//            report.setComment(comment);
+//            activityLogService.logActivity("Complete Report", "Report ID " + reportId + " completed by SSO", initiator);
+//            return reportRepository.save(report);  // Save the updated entity
+//        } else {
+//            throw new Exception("Report not found with ID: " + reportId);
+//        }
+//    }
 	
 	public Optional<ReportEntity> updateReceived(Long reportId, String receivedDate) {
         Optional<ReportEntity> reportOptional = reportRepository.findById(reportId);
@@ -137,7 +136,7 @@ public class ReportService {
 	        StudentEntity student = studentOptional.get();
 
 	        // Retrieve the adviser based on the student's section and school year
-	        Optional<UserEntity> adviserOptional = userRepository.findByGradeAndSectionAndSchoolYear(student.getGrade(), student.getSection(), student.getSchoolYear());
+	        Optional<UserEntity> adviserOptional = userRepository.findByGradeAndSectionAndSchoolYearAndDeleted(student.getGrade(), student.getSection(), student.getSchoolYear(), false);
 	        if (adviserOptional.isEmpty()) {
 	            throw new Exception("Adviser not found for the student's section and school year");
 	        }
@@ -156,9 +155,9 @@ public class ReportService {
 	        
 	        studentRecordRepository.save(studentRecord);
 	        
-	        
+	        existingReport.setComment(updatedReport.getComment());
 	        existingReport.setComplaint(updatedReport.getComplaint());
-	        existingReport.setComplete(false);
+	        existingReport.setComplete(updatedReport.isComplete());
 	        existingReport.setReceived(null);
 	        existingReport.setViewedByAdviser(false);
 	        existingReport.setViewedBySso(false);

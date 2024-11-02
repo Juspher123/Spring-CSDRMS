@@ -22,7 +22,11 @@ import com.capstone.csdrms.Entity.StudentEntity;
 import com.capstone.csdrms.Entity.StudentRecordEntity;
 import com.capstone.csdrms.Repository.CaseRepository;
 import com.capstone.csdrms.Repository.FollowupRepository;
+import com.capstone.csdrms.Repository.ReportRepository;
 import com.capstone.csdrms.Repository.SuspensionRepository;
+
+import jakarta.transaction.Transactional;
+
 import com.capstone.csdrms.Repository.StudentRecordRepository;
 import com.capstone.csdrms.Repository.StudentRepository;
 
@@ -32,24 +36,27 @@ import com.capstone.csdrms.Repository.StudentRepository;
 public class StudentService {
 
 	@Autowired
-	StudentRepository srepo;
+	StudentRepository studentRepository;
 	
 	@Autowired
-	StudentRecordRepository studentrepo;
-	
-	
-	@Autowired
-	CaseRepository caserepo;
+	StudentRecordRepository studentRecordRepository;
 	
 	@Autowired
-	SuspensionRepository sanctionrepo;
+	ReportRepository reportRepository;
+//	
+	
+//	@Autowired
+//	CaseRepository caserepo;
 	
 	@Autowired
-	FollowupRepository followuprepo;
+    SuspensionRepository suspensionRepository;
+	
+//	@Autowired
+//	FollowupRepository followuprepo;
 	 
-	
+	 
 	public boolean studentExists(String sid, String schoolYear) {
-	    return srepo.existsBySidAndSchoolYear(sid, schoolYear);
+	    return studentRepository.existsBySidAndSchoolYear(sid, schoolYear);
 	}
 
 	public StudentEntity insertStudent(StudentEntity student) {
@@ -57,29 +64,77 @@ public class StudentService {
 	        throw new IllegalStateException("Student with this ID and school year already exists.");
 	    }
 
-	    List<StudentEntity> existingStudents = srepo.findAllBySid(student.getSid());
+	    List<StudentEntity> existingStudents = studentRepository.findAllBySid(student.getSid());
 	    
 	    if (!existingStudents.isEmpty()) {
 	        for (StudentEntity existingStudent : existingStudents) {
 	            existingStudent.setCurrent(0); 
-	            srepo.save(existingStudent);   
+	            studentRepository.save(existingStudent);   
 	        }
 	    }
-	    return srepo.save(student);
+	    return studentRepository.save(student);
 	}
 	
 	public List<StudentEntity> getAllStudents(){
-		return srepo.findAll();
+		return studentRepository.findAll();
 	}
  
 	 
 	public List<StudentEntity> getCurrentStudents(){
-		return srepo.findAllByCurrent(1);
+		return studentRepository.findAllByCurrent(1);
 	}
 	
 	public List<StudentEntity> getStudentsByAdviser(int grade, String section, String schoolYear) {
-        return srepo.findByCurrentAndGradeAndSectionAndSchoolYear(1,grade, section, schoolYear);
+        return studentRepository.findByCurrentAndGradeAndSectionAndSchoolYear(1,grade, section, schoolYear);
     }
+	
+	 public StudentEntity updateStudent(Long id, StudentEntity studentDetails) {
+	        // Find the existing student by ID
+	        StudentEntity existingStudent = studentRepository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Student not found for id: " + id));
+	        
+	        // Update fields
+	        existingStudent.setSid(studentDetails.getSid());
+	        existingStudent.setName(studentDetails.getName());
+	        existingStudent.setGrade(studentDetails.getGrade());
+	        existingStudent.setSection(studentDetails.getSection());
+	        existingStudent.setGender(studentDetails.getGender());
+	        existingStudent.setContactNumber(studentDetails.getContactNumber());
+	        existingStudent.setSchoolYear(studentDetails.getSchoolYear());
+	        existingStudent.setCurrent(studentDetails.getCurrent());
+	        
+	        // Save the updated student back to the database
+	        return studentRepository.save(existingStudent);
+	    }
+	 
+	 @Transactional
+	 public void deleteLatestAndSetPreviousAsCurrent(Long id) {
+		 Optional<StudentEntity> optionalStudent = studentRepository.findById(id);
+		 if(optionalStudent.isPresent()) {
+			 StudentEntity student = optionalStudent.get();
+			 String sid = student.getSid();
+			 
+			 suspensionRepository.deleteAllByReportEntity_Record_Id(id);
+			 reportRepository.deleteAllByRecord_Id(id);
+			 studentRecordRepository.deleteAllById(id);
+			 studentRepository.delete(student);
+			 
+			 
+			 //Find the previous record by sorting by `schoolYear` in descending order
+			  List<StudentEntity> sortedStudents = studentRepository.findStudentsBySidOrderBySchoolYearDesc(sid);
+		        if (!sortedStudents.isEmpty()) {
+		        	// Set the first record in the sorted list to `current = 1`
+		            StudentEntity previousStudent = sortedStudents.get(0);
+		            previousStudent.setCurrent(1);
+		            studentRepository.save(previousStudent);
+		        }
+			  
+		 }
+		 else {
+	            throw new RuntimeException("Student not found for id: " + id);
+	        }
+	       
+	    }
 	
 
 //	@SuppressWarnings("finally")
@@ -131,15 +186,36 @@ public class StudentService {
 //	}
 	
 	public Optional<StudentEntity> getCurrentStudentById(Long id) {
-		return srepo.findByIdAndCurrent(id, 1);
+		return studentRepository.findByIdAndCurrent(id, 1);
 	}
 	
 	public Optional<StudentEntity> getStudentById(Long id){
-		return srepo.findById(id);
+		return studentRepository.findById(id);
 	}
 	
 	public void importStudentData(MultipartFile file, String schoolYear) throws Exception {
 	    List<StudentEntity> students = new ArrayList<>();
+	    
+	    // Pre-check for existing students before processing
+	    try (InputStream is = file.getInputStream(); Workbook workbook = new XSSFWorkbook(is)) {
+	        Sheet sheet = workbook.getSheetAt(0);  // Assuming data is in the first sheet
+
+	        for (Row row : sheet) {
+	            if (row.getRowNum() == 0) continue;  // Skip header row
+
+	            String sid;
+	            if (row.getCell(3).getCellType() == CellType.NUMERIC) {
+	                sid = String.valueOf((long) row.getCell(3).getNumericCellValue());
+	            } else {
+	                sid = row.getCell(3).getStringCellValue();
+	            }
+
+	            // Check if the student with this SID and school year already exists
+	            if (studentExists(sid, schoolYear)) {
+	                throw new Exception("Import aborted: Student with SID " + sid + " and school year " + schoolYear + " already exists.");
+	            }
+	        }
+	    }
 
 	    try (InputStream is = file.getInputStream(); Workbook workbook = new XSSFWorkbook(is)) {
 	        Sheet sheet = workbook.getSheetAt(0);  // Assuming data is in the first sheet
@@ -155,25 +231,36 @@ public class StudentService {
 	            
 	            student.setSection(row.getCell(2).getStringCellValue());
 	            
-	            // Handle SID (which could be numeric in Excel)
+	            String sid;
 	            if (row.getCell(3).getCellType() == CellType.NUMERIC) {
-	                student.setSid(String.valueOf((long) row.getCell(0).getNumericCellValue()));
+	                sid = String.valueOf((long) row.getCell(3).getNumericCellValue());
 	            } else {
-	                student.setSid(row.getCell(3).getStringCellValue());
+	                sid = row.getCell(3).getStringCellValue();
 	            }
-	            
+	            student.setSid(sid);
 	            student.setGender(row.getCell(4).getStringCellValue());
+	            
+	            student.setContactNumber(row.getCell(5).getStringCellValue());
 	            
 	            // Handle School Year
 	            student.setSchoolYear(schoolYear);
 
 	            student.setCurrent(1);
+	            
+	            Optional<StudentEntity> existingStudent = studentRepository.findBySidAndCurrent(sid, 1);
+	            if (existingStudent.isPresent() && !existingStudent.get().getSchoolYear().equals(schoolYear)) {
+	                // Set current status of the existing student to 0
+	                StudentEntity oldStudent = existingStudent.get();
+	                oldStudent.setCurrent(0);
+	                studentRepository.save(oldStudent);
+	            }
 
-	            students.add(student);
+
+	            students.add(student); 
 	        }
 	    }
 
-	    srepo.saveAll(students);
+	    studentRepository.saveAll(students);
 	}
 
 

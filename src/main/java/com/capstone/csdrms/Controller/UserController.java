@@ -51,11 +51,21 @@ public class UserController {
         return ResponseEntity.ok(updatedUserEntity);
     }
     
+//    @DeleteMapping("/deleteUser/{username}")
+//    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
+//        userService.deleteUser(username);
+//        return ResponseEntity.noContent().build(); // HTTP 204 No Content response on successful deletion
+//    } 
+    
     @DeleteMapping("/deleteUser/{username}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
-        userService.deleteUser(username);
-        return ResponseEntity.noContent().build(); // HTTP 204 No Content response on successful deletion
-    } 
+    public ResponseEntity<String> softDeleteUser(@PathVariable String username) {
+        boolean deleted = userService.softDeleteUserByUsername(username);
+        if (deleted) {
+            return ResponseEntity.ok("User marked as deleted successfully.");
+        } else {
+            return ResponseEntity.status(404).body("User not found.");
+        }
+    }
     
     @GetMapping("/getPrincipal")
     public ResponseEntity<UserEntity> getPrincipal() {
@@ -69,14 +79,14 @@ public class UserController {
     }
     
     
-//    @GetMapping("/adviser")
-//    public ResponseEntity<AdviserEntity> getAdviser(@RequestParam int grade,@RequestParam String section,@RequestParam String schoolYear) {
-//    	 Optional<AdviserEntity> adviser = userService.getAdviser(grade, section, schoolYear);
-//         
-//         if (adviser.isPresent()) {
-//             return ResponseEntity.ok(adviser.get());
-//         } else {
-//             return ResponseEntity.notFound().build();
-//         }
-//    }
+    @GetMapping("/adviser")
+    public ResponseEntity<UserEntity> getAdviser(@RequestParam int grade,@RequestParam String section,@RequestParam String schoolYear) {
+    	 Optional<UserEntity> adviser = userService.getAdviser(grade, section, schoolYear);
+         
+         if (adviser.isPresent()) {
+             return ResponseEntity.ok(adviser.get());
+         } else {
+             return ResponseEntity.notFound().build();
+         }
+    }
 }

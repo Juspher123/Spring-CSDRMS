@@ -62,7 +62,7 @@ public class SuspensionService {
 	        
 	        // Automatically insert a student report after the sanction is added
 	        insertStudentRecordFromSanction(savedSanction);
-	        activityLogService.logActivity("Student Suspension", "Student " + savedSanction.getReportEntity().getRecord().getSid() + " (" +savedSanction.getReportEntity().getRecord().getStudent().getName()+")" + " has been suspended by SSO", Long.valueOf(1));
+//	        activityLogService.logActivity("Student Suspension", "Student " + savedSanction.getReportEntity().getRecord().getSid() + " (" +savedSanction.getReportEntity().getRecord().getStudent().getName()+")" + " has been suspended by SSO", Long.valueOf(1));
 	        
 	        return savedSanction;
 	    } else {
@@ -162,6 +162,7 @@ public class SuspensionService {
 	         suspension.setStartDate(updatedSuspensionData.getStartDate());
 	         suspension.setEndDate(updatedSuspensionData.getEndDate());
 	         suspension.setReturnDate(updatedSuspensionData.getReturnDate());
+	         suspension.setOffense(updatedSuspensionData.getOffense());
 	         
 	      // Reset viewed statuses for notifications
 	         suspension.setViewedByPrincipal(false);
@@ -171,7 +172,7 @@ public class SuspensionService {
 	         // Save the updated suspension
 	         SuspensionEntity savedSuspension = suspensionRepository.save(suspension);
 	         
-	         activityLogService.logActivity("Update Suspension", "Suspension " + suspensionId + " updated by SSO", Long.valueOf(1));
+//	         activityLogService.logActivity("Update Suspension", "Suspension " + suspensionId + " updated by SSO", Long.valueOf(1));
 
 	         return savedSuspension;
 	     } else {
@@ -183,11 +184,30 @@ public class SuspensionService {
 	 public void deleteSuspension(Long suspensionId) {
 	        Optional<SuspensionEntity> suspension = suspensionRepository.findById(suspensionId);
 	        if (suspension.isPresent()) {
+	        	 Optional<ReportEntity> optionalReport = reportRepository.findById(suspension.get().getReportId());
+	        	 if(optionalReport.isPresent()) {
+	        		 ReportEntity report = optionalReport.get();
+	        		 report.setComplete(false);
+	        		 reportRepository.save(report);
+	        	 }
 	            suspensionRepository.delete(suspension.get());
-	            activityLogService.logActivity("Lift Suspension", "Suspension " + suspensionId + " has been lifted by SSO", Long.valueOf(1));
+//	            activityLogService.logActivity("Lift Suspension", "Suspension " + suspensionId + " has been lifted by SSO", Long.valueOf(1));
 	        } else {
 	            throw new RuntimeException("Suspension not found for id: " + suspensionId);
 	        }
+	    }
+	 
+	 
+	 @Transactional
+	    public boolean approveSuspension(Long suspensionId) {
+	        Optional<SuspensionEntity> optionalSuspension = suspensionRepository.findById(suspensionId);
+	        if (optionalSuspension.isPresent()) {
+	            SuspensionEntity suspension = optionalSuspension.get();
+	            suspension.setApproved(true);
+	            suspensionRepository.save(suspension);
+	            return true;
+	        }
+	        return false;
 	    }
 	 
 	 
@@ -196,17 +216,7 @@ public class SuspensionService {
 //        return srepo.findAllByCaseEntity_Id(id);
 //    }
 //	
-//	 @Transactional
-//	    public boolean approveSanction(int sanctionId) {
-//	        Optional<SuspensionEntity> optionalSanction = srepo.findById(sanctionId);
-//	        if (optionalSanction.isPresent()) {
-//	            SuspensionEntity sanction = optionalSanction.get();
-//	            sanction.setIsApproved(1);
-//	            srepo.save(sanction);
-//	            return true;
-//	        }
-//	        return false;
-//	    }
+	 
 //	 
 //	 @Transactional
 //	    public boolean declineSanction(int sanctionId) {

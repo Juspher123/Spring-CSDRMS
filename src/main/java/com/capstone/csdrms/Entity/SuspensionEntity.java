@@ -21,14 +21,16 @@ public class SuspensionEntity {
 	private String dateSubmitted;
 	private int days;
 	private String startDate;
-	private String endDate;
+	private String endDate;  
 	private String returnDate;
+	private String offense;
+	private boolean approved = false;
 	private boolean viewedByPrincipal;
 	private boolean viewedByAdviser;
 	private boolean viewedBySso;
 	private boolean viewedByComplainant;
 	
-	
+	 
 	@ManyToOne
     @JoinColumn(name = "reportId", insertable = false, updatable = false)
     private ReportEntity reportEntity;
@@ -38,8 +40,8 @@ public class SuspensionEntity {
 	}
 
 	public SuspensionEntity(Long suspensionId, Long reportId, String dateSubmitted, int days, String startDate,
-			String endDate, String returnDate, boolean viewedByPrincipal, boolean viewedByAdviser, boolean viewedBySso,
-			boolean viewedByComplainant, ReportEntity reportEntity) {
+			String endDate, String returnDate, String offense, boolean approved, boolean viewedByPrincipal,
+			boolean viewedByAdviser, boolean viewedBySso, boolean viewedByComplainant, ReportEntity reportEntity) {
 		super();
 		this.suspensionId = suspensionId;
 		this.reportId = reportId;
@@ -48,6 +50,8 @@ public class SuspensionEntity {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.returnDate = returnDate;
+		this.offense = offense;
+		this.approved = approved;
 		this.viewedByPrincipal = viewedByPrincipal;
 		this.viewedByAdviser = viewedByAdviser;
 		this.viewedBySso = viewedBySso;
@@ -111,6 +115,22 @@ public class SuspensionEntity {
 		this.returnDate = returnDate;
 	}
 
+	public String getOffense() {
+		return offense;
+	}
+
+	public void setOffense(String offense) {
+		this.offense = offense;
+	}
+
+	public boolean isApproved() {
+		return approved;
+	}
+
+	public void setApproved(boolean approved) {
+		this.approved = approved;
+	}
+
 	public boolean isViewedByPrincipal() {
 		return viewedByPrincipal;
 	}
@@ -152,5 +172,4 @@ public class SuspensionEntity {
 	}
 
 	
- 
 }

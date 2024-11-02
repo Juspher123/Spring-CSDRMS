@@ -28,23 +28,46 @@ import com.capstone.csdrms.Service.StudentService;
 public class StudentController {
 
 	@Autowired
-	StudentService sserv;
+	StudentService studentService;
 	
 	
 		@PostMapping("/insertStudent")
 		public StudentEntity insertStudent(@RequestBody StudentEntity student) {
-			return sserv.insertStudent(student);
+			return studentService.insertStudent(student);
 		}
 		
 		@GetMapping("/getAllStudents")
 		public List<StudentEntity> getAllStudents(){
-			return sserv.getAllStudents();
+			return studentService.getAllStudents();
 		}
 		
 		@GetMapping("/getAllCurrentStudents")
 		public List<StudentEntity> getCurrentStudents(){
-			return sserv.getCurrentStudents();
+			return studentService.getCurrentStudents();
 		}
+		
+		@PutMapping("/update/{id}")
+	    public ResponseEntity<StudentEntity> updateStudent(@PathVariable Long id, @RequestBody StudentEntity studentDetails) {
+	        
+	        // Call the service method to update the student
+	        StudentEntity updatedStudent = studentService.updateStudent(id, studentDetails);
+	        
+	        return ResponseEntity.ok(updatedStudent);
+	    }
+		
+		@DeleteMapping("/delete/{id}")
+	    public ResponseEntity<String> deleteLatestAndSetPreviousAsCurrent(@PathVariable Long id) {
+	        try {
+	            studentService.deleteLatestAndSetPreviousAsCurrent(id);
+	            return new ResponseEntity<>("Successfully deleted the latest student and updated the previous record.", HttpStatus.OK);
+	        } catch (RuntimeException e) {
+	            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+	        } catch (Exception e) {
+	            return new ResponseEntity<>("An error occurred while processing the request.", HttpStatus.INTERNAL_SERVER_ERROR);
+	        }
+	    }
+		
+		
 		  
 //		@PutMapping("/updateStudent")
 //		public StudentEntity updateStudent(@RequestParam String sid,@RequestBody StudentEntity newStudentDetails){
@@ -58,24 +81,24 @@ public class StudentController {
 		
 		@GetMapping("/getCurrentStudent/{id}")
 		public Optional<StudentEntity> getCurrentStudentById(@PathVariable Long id) {
-			return sserv.getCurrentStudentById(id);
+			return studentService.getCurrentStudentById(id);
 		}
 		  
 		 @GetMapping("/getAllStudentsByAdviser")
 		 public List<StudentEntity> getStudentsByAdviser(@RequestParam int grade, @RequestParam String section,@RequestParam String schoolYear) {
-			return sserv.getStudentsByAdviser(grade, section, schoolYear); 
+			return studentService.getStudentsByAdviser(grade, section, schoolYear); 
 		} 
 		
 		 
 		 @GetMapping("/getStudentById/{id}")
 		 public Optional<StudentEntity> getStudentById(@PathVariable Long id){
-			 return sserv.getStudentById(id);
+			 return studentService.getStudentById(id);
 		 }
 		 
 		 @PostMapping("/import")
 		    public ResponseEntity<?> importStudentData(@RequestParam("file") MultipartFile file, @RequestParam String schoolYear) {
 		        try {
-		        	sserv.importStudentData(file,schoolYear);  // Call service to process the Excel file
+		        	studentService.importStudentData(file,schoolYear);  // Call service to process the Excel file
 		            return ResponseEntity.ok("File uploaded and students imported successfully");
 		        } catch (Exception e) {
 		            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file: " + e.getMessage());

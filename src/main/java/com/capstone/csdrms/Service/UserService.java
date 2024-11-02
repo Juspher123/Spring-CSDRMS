@@ -16,6 +16,7 @@ import com.capstone.csdrms.Repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
@@ -49,15 +50,21 @@ public class UserService {
 	            throw new IllegalArgumentException("Username already exist");
 	        }
 
-	        if (user.getUserType()== 3) {
-	        	
-	        	Optional<UserEntity> adviserUser = userRepository.findByGradeAndSectionAndSchoolYear(user.getGrade(), user.getSection(), user.getSchoolYear());
-	          
+	        if (user.getUserType()== 2) {
+	        	Optional<UserEntity> principalUser = userRepository.findByUserTypeAndDeleted(2,false);
+				
+	        	 if (principalUser.isPresent()) {
+		            	throw new IllegalArgumentException("Principal already exists");
+		            }
+	        }
+	        else if(user.getUserType()== 3) {
+	        	Optional<UserEntity> adviserUser = userRepository.findByGradeAndSectionAndSchoolYearAndDeleted(user.getGrade(), user.getSection(), user.getSchoolYear(), false);
+		          
 
 	            if (adviserUser.isPresent()) {
 	            	throw new IllegalArgumentException("Adviser with the same grade, section, and school year already exists");
 	            }
-	        } 
+	        }
 	        else {
 	        	user.setGrade(null);
 	        	user.setSection(null);
@@ -70,11 +77,11 @@ public class UserService {
 
 	        
 	            userRepository.save(user);
-	            activityLogService.logActivity("Register User", "User " + user.getUsername() + " registered by Admin", Long.valueOf(4));
+//	            activityLogService.logActivity("Register User", "User " + user.getUsername() + " registered by Admin", Long.valueOf(4));
 	    }
 	
 	public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findAllActiveUsers();
     }
 	
 	
@@ -114,25 +121,33 @@ public class UserService {
 
 	}
 	
-	 public void deleteUser(String username) {
-	        // Find the user by their username
-	        Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
-
-	        if (optionalUser.isPresent()) {
-	            // If the user is found, delete the user
-	            UserEntity user = optionalUser.get();
-	            timeLogService.deleteAllTimeLogsByUser(user.getUserId());
-	            reportService.deleteAllReportsByComplainant(username);
-	            userRepository.delete(user);
-	            activityLogService.logActivity("Delete User", "User " + user.getUsername() + " deleted by Admin", Long.valueOf(4));
-	        } else {
-	            // Handle case where user is not found
-	            throw new RuntimeException("User not found with username: " + username);
-	        }
-	    }
+//	 public void deleteUser(String username) {
+//	        // Find the user by their username
+//	        Optional<UserEntity> optionalUser = userRepository.findByUsername(username);
+//
+//	        if (optionalUser.isPresent()) {
+//	            // If the user is found, delete the user
+//	            UserEntity user = optionalUser.get();
+//	            timeLogService.deleteAllTimeLogsByUser(user.getUserId());
+//	            reportService.deleteAllReportsByComplainant(username);
+//	            userRepository.delete(user);
+//	            activityLogService.logActivity("Delete User", "User " + user.getUsername() + " deleted by Admin", Long.valueOf(4));
+//	        } else {
+//	            // Handle case where user is not found
+//	            throw new RuntimeException("User not found with username: " + username);
+//	        }
+//	    }
+	
+	@Transactional
+    public boolean softDeleteUserByUsername(String username) {
+        int rowsUpdated = userRepository.softDeleteByUsername(username);
+        return rowsUpdated > 0; // Returns true if a user was marked as deleted
+    }
+	
+	
 	 
 	 public UserEntity getPrincipal() {
-		 Optional<UserEntity> optionalPrincipal = userRepository.findByUserType(2);
+		 Optional<UserEntity> optionalPrincipal = userRepository.findByUserTypeAndDeleted(2,false);
 				 if (optionalPrincipal.isPresent()) {
 					 UserEntity principal = optionalPrincipal.get();
 					 return principal;
@@ -143,9 +158,9 @@ public class UserService {
 			        }
 	 }
 	 
-//	 public Optional<AdviserEntity> getAdviser(int grade, String section, String schoolYear) {
-//		 return adviserRepository.findByGradeAndSectionAndSchoolYear(grade, section, schoolYear);
-//	 }
+	 public Optional<UserEntity> getAdviser(int grade, String section, String schoolYear) {
+		 return userRepository.findByGradeAndSectionAndSchoolYearAndDeleted(grade, section, schoolYear, false);
+	 }
 	
 	
 	

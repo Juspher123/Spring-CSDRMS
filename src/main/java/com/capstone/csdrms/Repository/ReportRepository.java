@@ -29,5 +29,8 @@ public interface ReportRepository  extends JpaRepository<ReportEntity, Long> {
 	
 	ReportEntity findByRecordId(Long recordId);
 	
+	
+	void deleteAllByRecord_Id(Long id);
+	
 
 }

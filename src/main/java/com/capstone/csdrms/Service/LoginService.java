@@ -18,7 +18,7 @@ public class LoginService {
 	public UserEntity login(String username, String password) {
 
         // Retrieve user by username
-        Optional<UserEntity> user = userRepository.findByUsername(username);
+        Optional<UserEntity> user = userRepository.findByUsernameAndDeleted(username,false);
 
         // Create a BCryptPasswordEncoder for password comparison
         BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();

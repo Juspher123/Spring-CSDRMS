@@ -29,6 +29,8 @@ public interface SuspensionRepository extends JpaRepository<SuspensionEntity, Lo
 	List<SuspensionEntity> findAllByReportEntity_ComplainantAndViewedByComplainantFalse(String username);
 	
 	void deleteAllByReportEntity_Complainant(String complainant);
+	
+	void deleteAllByReportEntity_Record_Id(Long id);
 
 
 	

@@ -29,12 +29,14 @@ public class UserEntity {
     private String section;
     private String schoolYear;
     
+    private boolean deleted = false;
+    
 	public UserEntity() {
 		super();
 	}
 
 	public UserEntity(Long userId, String username, String password, String firstname, String lastname, String email,
-			int userType, Integer grade, String section, String schoolYear) {
+			int userType, Integer grade, String section, String schoolYear, boolean deleted) {
 		super();
 		this.userId = userId;
 		this.username = username;
@@ -46,6 +48,7 @@ public class UserEntity {
 		this.grade = grade;
 		this.section = section;
 		this.schoolYear = schoolYear;
+		this.deleted = deleted;
 	}
 
 	public Long getUserId() {
@@ -127,6 +130,16 @@ public class UserEntity {
 	public void setSchoolYear(String schoolYear) {
 		this.schoolYear = schoolYear;
 	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	
 
 	
 }

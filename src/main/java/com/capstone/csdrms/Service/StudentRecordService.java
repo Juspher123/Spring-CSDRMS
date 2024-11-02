@@ -43,7 +43,7 @@ public class StudentRecordService {
 		StudentRecordEntity savedRecord = studentRecordRepository.save(studentRecord);
 		Optional<StudentEntity> optionalStudent = studentRepositry.findById(savedRecord.getId());
 		StudentEntity student = optionalStudent.get();
-		activityLogService.logActivity("Insert Student Record", "A new record has been inserted by SSO for student " + student.getSid() + " (" +student.getName()+")", Long.valueOf(1));
+//		activityLogService.logActivity("Insert Student Record", "A new record has been inserted by SSO for student " + student.getSid() + " (" +student.getName()+")", Long.valueOf(1));
 		return savedRecord;
 	}
 
@@ -56,7 +56,7 @@ public class StudentRecordService {
 	}
 	
 	public List<StudentRecordEntity> getStudentRecordsBySid(String sid) {
-		return studentRecordRepository.findAllBySid(sid);
+		return studentRecordRepository.findAllByStudent_Sid(sid);
 	}
 	
 	public StudentRecordEntity updateStudentRecord(Long recordId, StudentRecordEntity updatedRecord) throws Exception {

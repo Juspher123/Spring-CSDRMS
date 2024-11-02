@@ -40,15 +40,15 @@ public class ReportController {
 		return reportService.getAllReports();
 	}
 	
-	@PutMapping("/complete/{id}")
-    public ResponseEntity<ReportEntity> completeReport(@PathVariable("id") Long reportId, @RequestParam String comment) {
-        try {
-            ReportEntity completedReport = reportService.completeReport(reportId, comment);
-            return ResponseEntity.ok(completedReport);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
+//	@PutMapping("/complete/{id}/{initiator}")
+//    public ResponseEntity<ReportEntity> completeReport(@PathVariable("id") Long reportId, @RequestParam String comment, @PathVariable Long initiator) {
+//        try {
+//            ReportEntity completedReport = reportService.completeReport(reportId, comment, initiator);
+//            return ResponseEntity.ok(completedReport);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(null);
+//        }
+//    }
 	 
 	@PutMapping("/updateReceived/{reportId}")
     public ResponseEntity<ReportEntity> updateReceived(@PathVariable Long reportId, @RequestBody Map<String, String> data) {
