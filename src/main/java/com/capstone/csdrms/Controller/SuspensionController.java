@@ -33,9 +33,9 @@ public class SuspensionController {
 		return suspensionService.getAllSuspensions();
 	}
 	
-	@PostMapping("/insertSuspension")
-	public SuspensionEntity insertSuspension(@RequestBody SuspensionEntity suspension) {
-		return suspensionService.insertSuspension(suspension);
+	@PostMapping("/insertSuspension/{initiator}")
+	public SuspensionEntity insertSuspension(@RequestBody SuspensionEntity suspension, @PathVariable Long initiator) {
+		return suspensionService.insertSuspension(suspension, initiator);
 	}
 	
 	@GetMapping("/getSuspensionsByStudentId/{id}")
@@ -43,56 +43,10 @@ public class SuspensionController {
 		return suspensionService.getAllSuspensionsByStudentId(id);
 	}
 	
-	@GetMapping("/getAllSuspensionsByGradeSectionAndSchoolYear")
-	public List<SuspensionEntity> getAllSuspensionsByGradeSectionAndSchoolYear(@RequestParam int grade, @RequestParam String section,@RequestParam String schoolYear){
-		return suspensionService.getAllSuspensionsByGradeSectionAndSchoolYear(grade, section, schoolYear);
-	}
-	
-	@GetMapping("/getAllSuspensionsByComplainant")
-	public List<SuspensionEntity> getAllSuspensionByComplainant(@RequestParam String username){
-		return suspensionService.getAllSuspensionByComplainant(username);
-	}
-	
-	@GetMapping("/unviewedForSso")
-    public List<SuspensionEntity> getAllUnviewedSuspensionsForSso() {
-        return suspensionService.getAllUnviewedSuspensionsForSso();
-    }
 
-    @GetMapping("/unviewedForPrincipal")
-    public List<SuspensionEntity> getAllUnviewedSuspensionsForPrincipal() {
-        return suspensionService.getAllUnviewedSuspensionsForPrincipal();
-    }
-
-    @GetMapping("/unviewedForAdviser")
-    public List<SuspensionEntity> getAllUnviewedSuspensionsForAdviser(@RequestParam int grade, @RequestParam String section, @RequestParam String schoolYear) {
-        return suspensionService.getAllUnviewedSuspensionsForAdviser(grade, section, schoolYear);
-    }
-    
-    @GetMapping("/unviewedForComplainant")
-    public List<SuspensionEntity> getAllUnviewedSuspensionsForComplainant(@RequestParam String username){
-    	return suspensionService.getAllUnviewedSuspensionsForComplainant(username);
-    }
-    
-    // New methods to mark suspensions as viewed
-
-    @PostMapping("/markAsViewedForSso")
-    public void markSuspensionsAsViewedForSso() {
-    	suspensionService.markSuspensionsAsViewedForSso();
-    }
-
-    @PostMapping("/markAsViewedForPrincipal")
-    public void markSuspensionsAsViewedForPrincipal() {
-    	suspensionService.markSuspensionsAsViewedForPrincipal();
-    }
-
-    @PostMapping("/markAsViewedForAdviser")
-    public void markSuspensionsAsViewedForAdviser(@RequestParam int grade, @RequestParam String section, @RequestParam String schoolYear) {
-    	suspensionService.markSuspensionsAsViewedForAdviser(grade, section, schoolYear);
-    }
-    
-    @PostMapping("/markAsViewedForComplainant")
-    public void markSuspensionsAsViewedForComplainant(@RequestParam String username) {
-    	suspensionService.markSuspensionsAsViewedForComplainant(username);
+    @PostMapping("/markAsViewedForPrincipal/{suspensionId}/{initiator}")
+    public void markSuspensionsAsViewedForPrincipal(@PathVariable Long suspensionId, @PathVariable Long initiator ) {
+    	suspensionService.markSuspensionsAsViewedForPrincipal(suspensionId,initiator);
     }
     
     @GetMapping("/getSuspensionByReport/{reportId}")
@@ -102,32 +56,33 @@ public class SuspensionController {
                    .orElseGet(() -> ResponseEntity.notFound().build());
     }
     
-    @DeleteMapping("/delete/{suspensionId}")
-    public ResponseEntity<String> deleteSuspension(@PathVariable Long suspensionId) {
+    @DeleteMapping("/delete/{suspensionId}/{initiator}")
+    public ResponseEntity<String> deleteSuspension(@PathVariable Long suspensionId,  @PathVariable Long initiator) {
         try {
-            suspensionService.deleteSuspension(suspensionId);
+            suspensionService.deleteSuspension(suspensionId,initiator);
             return ResponseEntity.ok("Suspension deleted successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }
     
-    @PutMapping("/update/{suspensionId}")
+    @PutMapping("/update/{suspensionId}/{initiator}")
     public ResponseEntity<SuspensionEntity> updateSuspension(
             @PathVariable Long suspensionId,
-            @RequestBody SuspensionEntity updatedSuspensionData) {
+            @RequestBody SuspensionEntity updatedSuspensionData,
+            @PathVariable Long initiator) {
 
         try {
-            SuspensionEntity updatedSuspension = suspensionService.updateSuspension(suspensionId, updatedSuspensionData);
+            SuspensionEntity updatedSuspension = suspensionService.updateSuspension(suspensionId, updatedSuspensionData,initiator);
             return new ResponseEntity<>(updatedSuspension, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
     
-	@PostMapping("/approveSuspension")
-	public boolean approveSuspension(@RequestParam Long suspensionId) {
-		return suspensionService.approveSuspension(suspensionId);
+	@PostMapping("/approveSuspension/{initiator}")
+	public boolean approveSuspension(@RequestParam Long suspensionId, @PathVariable Long initiator) {
+		return suspensionService.approveSuspension(suspensionId, initiator);
 	} 
     
 	

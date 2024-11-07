@@ -42,7 +42,7 @@ public class UserService {
 	 @PersistenceContext
 	 private EntityManager entityManager;
 	
-	 public void register(UserEntity user) {
+	 public void register(UserEntity user, Long initiator) {
 
 		 Optional<UserEntity> existingUser = userRepository.findByUsername(user.getUsername());
 
@@ -77,7 +77,7 @@ public class UserService {
 
 	        
 	            userRepository.save(user);
-//	            activityLogService.logActivity("Register User", "User " + user.getUsername() + " registered by Admin", Long.valueOf(4));
+	            activityLogService.logActivity("Register User", "User " + user.getUsername() + " registered by Admin", initiator);
 	    }
 	
 	public List<UserEntity> getAllUsers() {
@@ -139,8 +139,12 @@ public class UserService {
 //	    }
 	
 	@Transactional
-    public boolean softDeleteUserByUsername(String username) {
+    public boolean softDeleteUserByUsername(String username, Long initiator) {
         int rowsUpdated = userRepository.softDeleteByUsername(username);
+        
+        
+        activityLogService.logActivity("Delete User", "User " + username + " deleted by Admin" , initiator);
+        
         return rowsUpdated > 0; // Returns true if a user was marked as deleted
     }
 	

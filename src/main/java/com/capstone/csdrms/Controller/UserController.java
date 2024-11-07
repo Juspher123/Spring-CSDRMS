@@ -27,9 +27,9 @@ public class UserController {
 	@Autowired
     UserService userService;
 	
-	@PostMapping("/registerUser")
-    public String registerSSO(@RequestBody UserEntity user) {
-		userService.register(user);
+	@PostMapping("/registerUser/{initiator}")
+    public String registerSSO(@RequestBody UserEntity user,@PathVariable Long initiator) {
+		userService.register(user,initiator);
         return "user created successfully";
     }
 
@@ -57,9 +57,9 @@ public class UserController {
 //        return ResponseEntity.noContent().build(); // HTTP 204 No Content response on successful deletion
 //    } 
     
-    @DeleteMapping("/deleteUser/{username}")
-    public ResponseEntity<String> softDeleteUser(@PathVariable String username) {
-        boolean deleted = userService.softDeleteUserByUsername(username);
+    @DeleteMapping("/deleteUser/{username}/{initiator}")
+    public ResponseEntity<String> softDeleteUser(@PathVariable String username, @PathVariable Long initiator) {
+        boolean deleted = userService.softDeleteUserByUsername(username, initiator);
         if (deleted) {
             return ResponseEntity.ok("User marked as deleted successfully.");
         } else {

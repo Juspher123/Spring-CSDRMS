@@ -39,11 +39,11 @@ public class StudentRecordService {
 	ActivityLogService activityLogService;
 	
 	
-	public StudentRecordEntity insertStudentRecord(StudentRecordEntity studentRecord) {
+	public StudentRecordEntity insertStudentRecord(StudentRecordEntity studentRecord, Long initiator) {
 		StudentRecordEntity savedRecord = studentRecordRepository.save(studentRecord);
 		Optional<StudentEntity> optionalStudent = studentRepositry.findById(savedRecord.getId());
 		StudentEntity student = optionalStudent.get();
-//		activityLogService.logActivity("Insert Student Record", "A new record has been inserted by SSO for student " + student.getSid() + " (" +student.getName()+")", Long.valueOf(1));
+		activityLogService.logActivity("Insert Student Record", "A new record has been inserted by SSO for student " + student.getSid() + " (" +student.getName()+")", initiator);
 		return savedRecord;
 	}
 
@@ -59,7 +59,7 @@ public class StudentRecordService {
 		return studentRecordRepository.findAllByStudent_Sid(sid);
 	}
 	
-	public StudentRecordEntity updateStudentRecord(Long recordId, StudentRecordEntity updatedRecord) throws Exception {
+	public StudentRecordEntity updateStudentRecord(Long recordId, StudentRecordEntity updatedRecord, Long initator) throws Exception {
         // Fetch the existing record by its ID
         Optional<StudentRecordEntity> existingRecordOpt = studentRecordRepository.findById(recordId);
         if (existingRecordOpt.isPresent()) {
@@ -69,7 +69,7 @@ public class StudentRecordService {
             existingRecord.setSanction(updatedRecord.getSanction());
             
             // Save the updated record
-            activityLogService.logActivity("Update Record", "Record " + recordId + " updated by SSO", Long.valueOf(1));
+            activityLogService.logActivity("Update Record", "Record " + recordId + " updated by SSO", initator);
             return studentRecordRepository.save(existingRecord);
         } else {
             throw new Exception("Student record not found with ID: " + recordId);
@@ -99,7 +99,7 @@ public class StudentRecordService {
 //		}
 //	}
 	
-	 public void deleteStudentRecord(Long recordId) {
+	 public void deleteStudentRecord(Long recordId, Long initiator) {
 		 boolean suspensionExist = false;
 		 boolean reportExist = false;
 	        // Find the report associated with the student record
@@ -123,7 +123,7 @@ public class StudentRecordService {
 	            studentRecordRepository.delete(studentRecord.get());
 	      
 	            String logMessage = "Record ID " + recordId + " deleted by SSO " + (reportExist ? "along with the associated report" +(suspensionExist ? " and its suspension" : ""): "");
-	            activityLogService.logActivity("Delete Record", logMessage, Long.valueOf(1));
+	            activityLogService.logActivity("Delete Record", logMessage, initiator);
 	            
 	        } else {
 	            throw new RuntimeException("Student record not found for id: " + recordId);

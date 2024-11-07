@@ -19,6 +19,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>{
     Optional<UserEntity> findByGradeAndSectionAndSchoolYearAndDeleted(int grade, String section, String schoolYear, boolean deleted);
     Optional<UserEntity> findByUserTypeAndDeleted(int userType, boolean deleted);
     
+    Optional<UserEntity> findByUsernameAndUserTypeAndDeleted(String username, int userType, boolean deleted);
+    
+    
     @Transactional
     @Modifying
     @Query("UPDATE UserEntity u SET u.deleted = true WHERE u.username = :username")
@@ -27,5 +30,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>{
     @Query("SELECT u FROM UserEntity u WHERE u.deleted = false")
     List<UserEntity> findAllActiveUsers();
     
+    
+    List<UserEntity> findAllByUserTypeInAndDeletedFalse(List<Integer> userTypes);
+
 //    Optional<UserEntity> findBySectionAndSchoolYear(String section, String schooYear);
 }

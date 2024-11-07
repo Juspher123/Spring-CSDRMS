@@ -20,17 +20,17 @@ public class ReportEntity {
     private Long recordId; 
 
     private Long adviserId; 
+    
+    private Long encoder;  
 
     private String date;
     private String time;
     private String complaint;
     private String complainant;
     private String received;
-    private String encoder;  
+    
     private String comment;
     private boolean complete;
-    private boolean viewedByAdviser;
-	private boolean viewedBySso;
 
     @OneToOne
     @JoinColumn(name = "recordId", referencedColumnName = "recordId", insertable = false, updatable = false)
@@ -43,6 +43,10 @@ public class ReportEntity {
     @ManyToOne(optional = true)
     @JoinColumn(name = "complainant", referencedColumnName = "username", insertable = false, updatable = false)
     private UserEntity userComplainant;
+    
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "encoder", referencedColumnName = "userId", insertable = false, updatable = false)
+    private UserEntity userEncoder;
 
     
     
@@ -51,27 +55,25 @@ public class ReportEntity {
 
 
 
-	public ReportEntity(Long reportId, Long recordId, Long adviserId, String date, String time, String complaint,
-			String complainant, String received, String encoder, String comment, boolean complete,
-			boolean viewedByAdviser, boolean viewedBySso, StudentRecordEntity record, UserEntity adviser,
-			UserEntity userComplainant) {
+	public ReportEntity(Long reportId, Long recordId, Long adviserId, Long encoder, String date, String time,
+			String complaint, String complainant, String received, String comment, boolean complete,
+			StudentRecordEntity record, UserEntity adviser, UserEntity userComplainant, UserEntity userEncoder) {
 		super();
 		this.reportId = reportId;
 		this.recordId = recordId;
 		this.adviserId = adviserId;
+		this.encoder = encoder;
 		this.date = date;
 		this.time = time;
 		this.complaint = complaint;
 		this.complainant = complainant;
 		this.received = received;
-		this.encoder = encoder;
 		this.comment = comment;
 		this.complete = complete;
-		this.viewedByAdviser = viewedByAdviser;
-		this.viewedBySso = viewedBySso;
 		this.record = record;
 		this.adviser = adviser;
 		this.userComplainant = userComplainant;
+		this.userEncoder = userEncoder;
 	}
 
 
@@ -108,6 +110,18 @@ public class ReportEntity {
 
 	public void setAdviserId(Long adviserId) {
 		this.adviserId = adviserId;
+	}
+
+
+
+	public Long getEncoder() {
+		return encoder;
+	}
+
+
+
+	public void setEncoder(Long encoder) {
+		this.encoder = encoder;
 	}
 
 
@@ -172,18 +186,6 @@ public class ReportEntity {
 
 
 
-	public String getEncoder() {
-		return encoder;
-	}
-
-
-
-	public void setEncoder(String encoder) {
-		this.encoder = encoder;
-	}
-
-
-
 	public String getComment() {
 		return comment;
 	}
@@ -208,30 +210,6 @@ public class ReportEntity {
 
 
 
-	public boolean isViewedByAdviser() {
-		return viewedByAdviser;
-	}
-
-
-
-	public void setViewedByAdviser(boolean viewedByAdviser) {
-		this.viewedByAdviser = viewedByAdviser;
-	}
-
-
-
-	public boolean isViewedBySso() {
-		return viewedBySso;
-	}
-
-
-
-	public void setViewedBySso(boolean viewedBySso) {
-		this.viewedBySso = viewedBySso;
-	}
-
-
-
 	public StudentRecordEntity getRecord() {
 		return record;
 	}
@@ -248,7 +226,7 @@ public class ReportEntity {
 		return adviser;
 	}
 
- 
+
 
 	public void setAdviser(UserEntity adviser) {
 		this.adviser = adviser;
@@ -265,7 +243,20 @@ public class ReportEntity {
 	public void setUserComplainant(UserEntity userComplainant) {
 		this.userComplainant = userComplainant;
 	}
- 
+
+
+
+	public UserEntity getUserEncoder() {
+		return userEncoder;
+	}
+
+
+
+	public void setUserEncoder(UserEntity userEncoder) {
+		this.userEncoder = userEncoder;
+	}
+    
+    
     
 }
 	

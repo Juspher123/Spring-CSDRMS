@@ -31,9 +31,9 @@ public class StudentController {
 	StudentService studentService;
 	
 	
-		@PostMapping("/insertStudent")
-		public StudentEntity insertStudent(@RequestBody StudentEntity student) {
-			return studentService.insertStudent(student);
+		@PostMapping("/insertStudent/{initiator}")
+		public StudentEntity insertStudent(@RequestBody StudentEntity student,@PathVariable Long initiator) {
+			return studentService.insertStudent(student, initiator);
 		}
 		
 		@GetMapping("/getAllStudents")
@@ -46,19 +46,19 @@ public class StudentController {
 			return studentService.getCurrentStudents();
 		}
 		
-		@PutMapping("/update/{id}")
-	    public ResponseEntity<StudentEntity> updateStudent(@PathVariable Long id, @RequestBody StudentEntity studentDetails) {
+		@PutMapping("/update/{id}/{initiator}")
+	    public ResponseEntity<StudentEntity> updateStudent(@PathVariable Long id, @RequestBody StudentEntity studentDetails, @PathVariable Long initiator) {
 	        
 	        // Call the service method to update the student
-	        StudentEntity updatedStudent = studentService.updateStudent(id, studentDetails);
+	        StudentEntity updatedStudent = studentService.updateStudent(id, studentDetails, initiator);
 	        
 	        return ResponseEntity.ok(updatedStudent);
 	    }
 		
-		@DeleteMapping("/delete/{id}")
-	    public ResponseEntity<String> deleteLatestAndSetPreviousAsCurrent(@PathVariable Long id) {
+		@DeleteMapping("/delete/{id}/{initiator}")
+	    public ResponseEntity<String> deleteLatestAndSetPreviousAsCurrent(@PathVariable Long id, @PathVariable Long initiator) {
 	        try {
-	            studentService.deleteLatestAndSetPreviousAsCurrent(id);
+	            studentService.deleteLatestAndSetPreviousAsCurrent(id,initiator);
 	            return new ResponseEntity<>("Successfully deleted the latest student and updated the previous record.", HttpStatus.OK);
 	        } catch (RuntimeException e) {
 	            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

@@ -24,12 +24,8 @@ public class SuspensionEntity {
 	private String endDate;  
 	private String returnDate;
 	private String offense;
+	private boolean viewedByPrincipal = false;
 	private boolean approved = false;
-	private boolean viewedByPrincipal;
-	private boolean viewedByAdviser;
-	private boolean viewedBySso;
-	private boolean viewedByComplainant;
-	
 	 
 	@ManyToOne
     @JoinColumn(name = "reportId", insertable = false, updatable = false)
@@ -40,8 +36,8 @@ public class SuspensionEntity {
 	}
 
 	public SuspensionEntity(Long suspensionId, Long reportId, String dateSubmitted, int days, String startDate,
-			String endDate, String returnDate, String offense, boolean approved, boolean viewedByPrincipal,
-			boolean viewedByAdviser, boolean viewedBySso, boolean viewedByComplainant, ReportEntity reportEntity) {
+			String endDate, String returnDate, String offense, boolean viewedByPrincipal, boolean approved,
+			ReportEntity reportEntity) {
 		super();
 		this.suspensionId = suspensionId;
 		this.reportId = reportId;
@@ -51,11 +47,8 @@ public class SuspensionEntity {
 		this.endDate = endDate;
 		this.returnDate = returnDate;
 		this.offense = offense;
-		this.approved = approved;
 		this.viewedByPrincipal = viewedByPrincipal;
-		this.viewedByAdviser = viewedByAdviser;
-		this.viewedBySso = viewedBySso;
-		this.viewedByComplainant = viewedByComplainant;
+		this.approved = approved;
 		this.reportEntity = reportEntity;
 	}
 
@@ -123,14 +116,6 @@ public class SuspensionEntity {
 		this.offense = offense;
 	}
 
-	public boolean isApproved() {
-		return approved;
-	}
-
-	public void setApproved(boolean approved) {
-		this.approved = approved;
-	}
-
 	public boolean isViewedByPrincipal() {
 		return viewedByPrincipal;
 	}
@@ -139,28 +124,12 @@ public class SuspensionEntity {
 		this.viewedByPrincipal = viewedByPrincipal;
 	}
 
-	public boolean isViewedByAdviser() {
-		return viewedByAdviser;
+	public boolean isApproved() {
+		return approved;
 	}
 
-	public void setViewedByAdviser(boolean viewedByAdviser) {
-		this.viewedByAdviser = viewedByAdviser;
-	}
-
-	public boolean isViewedBySso() {
-		return viewedBySso;
-	}
-
-	public void setViewedBySso(boolean viewedBySso) {
-		this.viewedBySso = viewedBySso;
-	}
-
-	public boolean isViewedByComplainant() {
-		return viewedByComplainant;
-	}
-
-	public void setViewedByComplainant(boolean viewedByComplainant) {
-		this.viewedByComplainant = viewedByComplainant;
+	public void setApproved(boolean approved) {
+		this.approved = approved;
 	}
 
 	public ReportEntity getReportEntity() {

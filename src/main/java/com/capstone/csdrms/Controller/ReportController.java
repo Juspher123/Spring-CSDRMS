@@ -66,10 +66,10 @@ public class ReportController {
 		return reportService.getAllReportsByComplainant(complainant);
 	}
 	
-	@GetMapping("/notifications")
-    public List<ReportEntity> getReportsExcludingComplainant(@RequestParam String complainant) {
-        return reportService.getReportsExcludingComplainant(complainant);
-    }
+//	@GetMapping("/notifications")
+//    public List<ReportEntity> getReportsExcludingComplainant(@RequestParam String complainant) {
+//        return reportService.getReportsExcludingComplainant(complainant);
+//    }
 	
 	@PutMapping("/updateReport/{reportId}/{id}/{monitored_record}/{initiator}")
 	public ResponseEntity<ReportEntity> updateReport(
@@ -93,25 +93,6 @@ public class ReportController {
 	                 .orElseGet(() -> ResponseEntity.notFound().build()); // If not found, return 404
 	}
 
-	@GetMapping("/unviewedForSso")
-	public List<ReportEntity> getAllUnviewedReportsForSso(){
-		return reportService.getAllUnviewedReportsForSso();
-	}
-	
-	@GetMapping("/unviewedForAdviser")
-	public List<ReportEntity> getAllUnviewedReportsForAdviser(@RequestParam int grade, @RequestParam String section,@RequestParam String schoolYear){
-		return reportService.getAllUnviewedReportsForAdviser(grade, section, schoolYear);
-	}
-	
-	@PostMapping("/markAsViewedForSso")
-    public void markReportsAsViewedForSso() {
-		reportService.markReportsAsViewedForSso();
-    }
-
-	@PostMapping("/markAsViewedForAdviser")
-    public void markReportsAsViewedForAdviser(@RequestParam int grade, @RequestParam String section, @RequestParam String schoolYear) {
-		reportService.markReportsAsViewedForAdviser(grade, section, schoolYear);
-    }
 	
 	@DeleteMapping("/delete/{reportId}/{initiator}")
     public ResponseEntity<String> deleteReport(@PathVariable Long reportId,@PathVariable Long initiator) {

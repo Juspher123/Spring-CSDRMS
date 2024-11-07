@@ -1,5 +1,6 @@
 package com.capstone.csdrms.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,10 @@ public class ReportService {
     
     @Autowired
     SuspensionRepository suspensionRepository;
+    
+    @Autowired
+    NotificationService notificationService;
+    
     
     @Autowired
     ActivityLogService activityLogService;
@@ -78,6 +83,17 @@ public class ReportService {
         Optional<UserEntity> optionalUser1 = userRepository.findById(initiator);
         UserEntity user = optionalUser1.get();
         activityLogService.logActivity("Create Report", "Report ID " + savedReport.getReportId() + " created by User "+ user.getUsername(), initiator);
+        
+        // 1. Define the notification message
+        String notificationMessage = "New report created for student " + student.getName() + " (Grade " + student.getGrade() + ", Section " + student.getSection() + ")";
+
+        // 2. Set the user types who should receive the notification
+        List<Integer> userTypes = new ArrayList<>();
+        userTypes.add(1); // Assuming userType 1 should receive the notification
+        userTypes.add(3); // Assuming userType 3 is for advisers
+
+        // 3. Call notification service to create the notification for specific users
+        notificationService.createNotificationForUserType("Report",savedReport.getReportId() ,notificationMessage, userTypes, initiator, student.getGrade(), student.getSection(), student.getSchoolYear());
 
         return savedReport;
     }
@@ -118,9 +134,9 @@ public class ReportService {
 		return reportRepository.findAllByComplainant(complainant);
 	}
 	
-	public List<ReportEntity> getReportsExcludingComplainant(String complainant) {
-        return reportRepository.findReportsExcludingComplainant(complainant);
-    }
+//	public List<ReportEntity> getReportsExcludingComplainant(String complainant) {
+//        return reportRepository.findReportsExcludingComplainant(complainant);
+//    }
 	
 	public ReportEntity updateReport(Long reportId, Long id, String monitored_record ,ReportEntity updatedReport, Long initiator) throws Exception {
 	    Optional<ReportEntity> existingReportOpt = reportRepository.findById(reportId);
@@ -159,8 +175,6 @@ public class ReportService {
 	        existingReport.setComplaint(updatedReport.getComplaint());
 	        existingReport.setComplete(updatedReport.isComplete());
 	        existingReport.setReceived(null);
-	        existingReport.setViewedByAdviser(false);
-	        existingReport.setViewedBySso(false);
 	        
 	        Optional<UserEntity> optionalUser1 = userRepository.findById(initiator);
 	        UserEntity user = optionalUser1.get();
@@ -178,25 +192,6 @@ public class ReportService {
 	    return reportRepository.findById(reportId);  // Fetch report by ID from the repository
 	}
 	
-	public List<ReportEntity> getAllUnviewedReportsForSso(){
-		return reportRepository.findAllByViewedBySsoFalse();
-	}
-	
-	public List<ReportEntity> getAllUnviewedReportsForAdviser(int grade, String section, String schoolYear){
-		return reportRepository.findAllByRecord_Student_GradeAndRecord_Student_SectionAndRecord_Student_SchoolYearAndViewedByAdviserFalse(grade, section, schoolYear);
-	}
-	
-	public void markReportsAsViewedForSso() {
-		List<ReportEntity> reports = reportRepository.findAllByViewedBySsoFalse();
-		reports.forEach(report -> report.setViewedBySso(true));
-		reportRepository.saveAll(reports);
-	}
-	
-	public void markReportsAsViewedForAdviser(int grade, String section, String schoolYear) {
-		List<ReportEntity> reports = reportRepository.findAllByRecord_Student_GradeAndRecord_Student_SectionAndRecord_Student_SchoolYearAndViewedByAdviserFalse(grade, section, schoolYear);
-		reports.forEach(report -> report.setViewedByAdviser(true));
-		reportRepository.saveAll(reports);
-	}
 	
 	 public void deleteReport(Long reportId, Long initiator) {
 		 boolean suspensionExist = false;

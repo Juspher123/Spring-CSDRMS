@@ -29,9 +29,9 @@ public class StudentRecordController {
 	 @Autowired
 	StudentRecordService studentRecordService;
 	
-	@PostMapping("/insertRecord")
-	public StudentRecordEntity insertStudentRecord(@RequestBody StudentRecordEntity studentRecord) {
-		return studentRecordService.insertStudentRecord(studentRecord);
+	@PostMapping("/insertRecord/{initiator}")
+	public StudentRecordEntity insertStudentRecord(@RequestBody StudentRecordEntity studentRecord, @PathVariable Long initiator) {
+		return studentRecordService.insertStudentRecord(studentRecord, initiator);
 	}
 	
 	@GetMapping("/getAllStudentRecords")
@@ -44,13 +44,14 @@ public class StudentRecordController {
 		return studentRecordService.getStudentRecordsBySid(sid);
 	}
 	
-	@PutMapping("/update/{recordId}")
+	@PutMapping("/update/{recordId}/{initiator}")
     public ResponseEntity<StudentRecordEntity> updateStudentRecord(
             @PathVariable Long recordId, 
-            @RequestBody StudentRecordEntity updatedRecord) {
+            @RequestBody StudentRecordEntity updatedRecord,
+            @PathVariable Long initiator) {
         try {
             // Call the service to update the student record
-            StudentRecordEntity updated = studentRecordService.updateStudentRecord(recordId, updatedRecord);
+            StudentRecordEntity updated = studentRecordService.updateStudentRecord(recordId, updatedRecord, initiator);
             return new ResponseEntity<>(updated, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);  // Handle not found or other exceptions
@@ -67,10 +68,10 @@ public class StudentRecordController {
 //		return sserv.updateStudentReport(rid, newStudentReportDetails);
 //	}
 //	
-	 @DeleteMapping("/delete/{recordId}")
-	    public ResponseEntity<String> deleteStudentRecord(@PathVariable Long recordId) {
+	 @DeleteMapping("/delete/{recordId}/{initiator}")
+	    public ResponseEntity<String> deleteStudentRecord(@PathVariable Long recordId, @PathVariable Long initiator) {
 	        try {
-	        	studentRecordService.deleteStudentRecord(recordId);
+	        	studentRecordService.deleteStudentRecord(recordId, initiator);
 	            return ResponseEntity.ok("Student record deleted successfully.");
 	        } catch (RuntimeException e) {
 	            return ResponseEntity.status(404).body(e.getMessage());

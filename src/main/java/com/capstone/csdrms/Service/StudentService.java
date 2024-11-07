@@ -51,6 +51,9 @@ public class StudentService {
 	@Autowired
     SuspensionRepository suspensionRepository;
 	
+	@Autowired
+	ActivityLogService activityLogService;
+	
 //	@Autowired
 //	FollowupRepository followuprepo;
 	 
@@ -59,7 +62,7 @@ public class StudentService {
 	    return studentRepository.existsBySidAndSchoolYear(sid, schoolYear);
 	}
 
-	public StudentEntity insertStudent(StudentEntity student) {
+	public StudentEntity insertStudent(StudentEntity student, Long initiator) {
 	    if (studentExists(student.getSid(), student.getSchoolYear())) {
 	        throw new IllegalStateException("Student with this ID and school year already exists.");
 	    }
@@ -72,6 +75,7 @@ public class StudentService {
 	            studentRepository.save(existingStudent);   
 	        }
 	    }
+	    activityLogService.logActivity("Student Added", "Student " + student.getSid() + " (" +student.getName()+")" + " added by SSO", initiator);
 	    return studentRepository.save(student);
 	}
 	
@@ -88,7 +92,7 @@ public class StudentService {
         return studentRepository.findByCurrentAndGradeAndSectionAndSchoolYear(1,grade, section, schoolYear);
     }
 	
-	 public StudentEntity updateStudent(Long id, StudentEntity studentDetails) {
+	 public StudentEntity updateStudent(Long id, StudentEntity studentDetails, Long initiator) {
 	        // Find the existing student by ID
 	        StudentEntity existingStudent = studentRepository.findById(id)
 	            .orElseThrow(() -> new RuntimeException("Student not found for id: " + id));
@@ -103,12 +107,14 @@ public class StudentService {
 	        existingStudent.setSchoolYear(studentDetails.getSchoolYear());
 	        existingStudent.setCurrent(studentDetails.getCurrent());
 	        
+	        
+	        activityLogService.logActivity("Student Edited", "Student " + existingStudent.getSid() + " (" +existingStudent.getName()+")" + " information edited by SSO", initiator);
 	        // Save the updated student back to the database
 	        return studentRepository.save(existingStudent);
 	    }
 	 
 	 @Transactional
-	 public void deleteLatestAndSetPreviousAsCurrent(Long id) {
+	 public void deleteLatestAndSetPreviousAsCurrent(Long id, Long initiator) {
 		 Optional<StudentEntity> optionalStudent = studentRepository.findById(id);
 		 if(optionalStudent.isPresent()) {
 			 StudentEntity student = optionalStudent.get();
@@ -118,6 +124,8 @@ public class StudentService {
 			 reportRepository.deleteAllByRecord_Id(id);
 			 studentRecordRepository.deleteAllById(id);
 			 studentRepository.delete(student);
+			 
+			 activityLogService.logActivity("Student Deleted", "Student " + student.getSid() + " (" +student.getName()+")" + " and its associated records, reports, and suspesion deleted by SSO", initiator);
 			 
 			 
 			 //Find the previous record by sorting by `schoolYear` in descending order
