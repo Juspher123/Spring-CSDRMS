@@ -42,7 +42,7 @@ public class UserService {
 	 @PersistenceContext
 	 private EntityManager entityManager;
 	
-	 public void register(UserEntity user, Long initiator) {
+	 public void register(UserEntity user) {
 
 		 Optional<UserEntity> existingUser = userRepository.findByUsername(user.getUsername());
 
@@ -77,7 +77,7 @@ public class UserService {
 
 	        
 	            userRepository.save(user);
-	            activityLogService.logActivity("Register User", "User " + user.getUsername() + " registered by Admin", initiator);
+	            
 	    }
 	
 	public List<UserEntity> getAllUsers() {

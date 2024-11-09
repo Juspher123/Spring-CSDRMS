@@ -27,9 +27,9 @@ public class UserController {
 	@Autowired
     UserService userService;
 	
-	@PostMapping("/registerUser/{initiator}")
-    public String registerSSO(@RequestBody UserEntity user,@PathVariable Long initiator) {
-		userService.register(user,initiator);
+	@PostMapping("/registerUser")
+    public String registerSSO(@RequestBody UserEntity user) {
+		userService.register(user);
         return "user created successfully";
     }
 

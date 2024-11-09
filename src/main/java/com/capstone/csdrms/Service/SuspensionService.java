@@ -49,6 +49,7 @@ public class SuspensionService {
 
 	@Transactional
 	public SuspensionEntity insertSuspension(SuspensionEntity suspension, Long initiator) {
+		String investigationDetails = suspension.getReportEntity().getInvestigationDetails();
 	    // Fetch the associated CaseEntity using the cid (case ID)
 	    Optional<ReportEntity> reportOptional = reportRepository.findById(suspension.getReportId());
 	    
@@ -56,13 +57,16 @@ public class SuspensionService {
 	    	ReportEntity reportEntity = reportOptional.get();
 	        // Set the CaseEntity in the sanction
 	    	suspension.setReportEntity(reportEntity);
-	    	
+	    	 reportEntity.setInvestigationDetails(investigationDetails);
 	    	 reportEntity.setComplete(true);
+	    	 
 	    	 
 	    	 reportRepository.save(reportEntity);
 	        
 	        // Save the sanction entity
 	        SuspensionEntity savedSanction = suspensionRepository.save(suspension);
+	        
+	       
 	        
 	        // Automatically insert a student report after the sanction is added
 	        insertStudentRecordFromSanction(savedSanction);
@@ -159,7 +163,6 @@ public class SuspensionService {
 	         suspension.setStartDate(updatedSuspensionData.getStartDate());
 	         suspension.setEndDate(updatedSuspensionData.getEndDate());
 	         suspension.setReturnDate(updatedSuspensionData.getReturnDate());
-	         suspension.setOffense(updatedSuspensionData.getOffense());
 	         
 	         // Save the updated suspension
 	         SuspensionEntity savedSuspension = suspensionRepository.save(suspension);

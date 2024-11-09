@@ -103,7 +103,10 @@ public class StudentService {
 	        existingStudent.setGrade(studentDetails.getGrade());
 	        existingStudent.setSection(studentDetails.getSection());
 	        existingStudent.setGender(studentDetails.getGender());
+	        existingStudent.setEmail(studentDetails.getEmail());
+	        existingStudent.setHomeAddress(studentDetails.getHomeAddress());
 	        existingStudent.setContactNumber(studentDetails.getContactNumber());
+	        existingStudent.setEmergencyNumber(studentDetails.getEmergencyNumber());
 	        existingStudent.setSchoolYear(studentDetails.getSchoolYear());
 	        existingStudent.setCurrent(studentDetails.getCurrent());
 	        
@@ -201,6 +204,21 @@ public class StudentService {
 		return studentRepository.findById(id);
 	}
 	
+	public static int getGrade(int number) {
+        switch (number) {
+            case 4:
+                return 10;
+            case 3:
+                return 9;
+            case 2:
+                return 8;
+            case 1:
+                return 7;
+            default:
+                throw new IllegalArgumentException("Invalid number: " + number);
+        }
+    }
+	
 	public void importStudentData(MultipartFile file, String schoolYear) throws Exception {
 	    List<StudentEntity> students = new ArrayList<>();
 	    
@@ -212,10 +230,10 @@ public class StudentService {
 	            if (row.getRowNum() == 0) continue;  // Skip header row
 
 	            String sid;
-	            if (row.getCell(3).getCellType() == CellType.NUMERIC) {
-	                sid = String.valueOf((long) row.getCell(3).getNumericCellValue());
+	            if (row.getCell(0).getCellType() == CellType.NUMERIC) {
+	                sid = String.valueOf((long) row.getCell(0).getNumericCellValue());
 	            } else {
-	                sid = row.getCell(3).getStringCellValue();
+	                sid = row.getCell(0).getStringCellValue();
 	            }
 
 	            // Check if the student with this SID and school year already exists
@@ -233,22 +251,45 @@ public class StudentService {
 
 	            StudentEntity student = new StudentEntity();
 	            
-	            student.setName(row.getCell(0).getStringCellValue());
-	            
-	            student.setGrade((int) row.getCell(1).getNumericCellValue());
-	            
-	            student.setSection(row.getCell(2).getStringCellValue());
-	            
 	            String sid;
-	            if (row.getCell(3).getCellType() == CellType.NUMERIC) {
-	                sid = String.valueOf((long) row.getCell(3).getNumericCellValue());
+	            if (row.getCell(0).getCellType() == CellType.NUMERIC) {
+	                sid = String.valueOf((long) row.getCell(0).getNumericCellValue());
 	            } else {
-	                sid = row.getCell(3).getStringCellValue();
+	                sid = row.getCell(0).getStringCellValue();
 	            }
 	            student.setSid(sid);
-	            student.setGender(row.getCell(4).getStringCellValue());
 	            
-	            student.setContactNumber(row.getCell(5).getStringCellValue());
+	            String name = row.getCell(1).getStringCellValue() + ", " + row.getCell(2).getStringCellValue() + " " +  row.getCell(3).getStringCellValue();
+	            
+	            student.setName(name);
+	            
+	            int gradeNumber;
+	            if (row.getCell(5).getCellType() == CellType.NUMERIC) {
+	                // If the cell is of numeric type, cast to int directly
+	                gradeNumber = (int) row.getCell(5).getNumericCellValue();
+	            } else if (row.getCell(5).getCellType() == CellType.STRING) {
+	                // If the cell is a string, parse it as an integer
+	                gradeNumber = Integer.parseInt(row.getCell(5).getStringCellValue());
+	            } else {
+	                // Handle any unexpected cell type here (optional)
+	                throw new IllegalArgumentException("Unexpected cell type in grade column");
+	            }
+
+	            // Now you can use gradeNumber as an int
+	            int grade = getGrade(gradeNumber);
+	            student.setGrade(grade);
+	            
+	            student.setGender(row.getCell(6).getStringCellValue());
+	            
+	            student.setHomeAddress(row.getCell(7).getStringCellValue());
+	            
+	            student.setContactNumber(row.getCell(8).getStringCellValue());
+	            
+	            student.setEmail(row.getCell(9).getStringCellValue());
+	            
+	            student.setEmergencyNumber(row.getCell(10).getStringCellValue());
+	            
+	            student.setSection(row.getCell(11).getStringCellValue());
 	            
 	            // Handle School Year
 	            student.setSchoolYear(schoolYear);

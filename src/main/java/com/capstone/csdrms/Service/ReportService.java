@@ -40,10 +40,10 @@ public class ReportService {
     @Autowired
     NotificationService notificationService;
     
-    
+     
     @Autowired
     ActivityLogService activityLogService;
-	
+	 
     public ReportEntity insertReport(Long id, ReportEntity report, Long initiator) throws Exception {
         Optional<StudentEntity> studentOptional = studentRepository.findById(id);
         if (studentOptional.isEmpty()) {
@@ -70,7 +70,7 @@ public class ReportService {
         studentRecord.setIncident_date(savedReport.getDate());
         studentRecord.setTime(savedReport.getTime());
         studentRecord.setMonitored_record("TBD");
-        studentRecord.setRemarks(savedReport.getComplaint());  // You can modify the remarks as needed
+        studentRecord.setDetails("Complaint: "+savedReport.getComplaint());  // You can modify the remarks as needed
         studentRecord.setSanction("");  // You can set this based on report or leave it empty
 
         // Save the student record
@@ -167,11 +167,15 @@ public class ReportService {
 	        StudentRecordEntity studentRecord = studentRecordOpt.get();
 	        studentRecord.setId(id);
 	        studentRecord.setMonitored_record(monitored_record);
-	        studentRecord.setRemarks(updatedReport.getComplaint());
+	        String details = "Complaint: " + updatedReport.getComplaint() + System.lineSeparator() + "Investigation Details: " + updatedReport.getInvestigationDetails();
+	    studentRecord.setDetails(details);
+	        studentRecord.setSanction(updatedReport.getRecord().getSanction());
 	        
 	        studentRecordRepository.save(studentRecord);
 	        
-	        existingReport.setComment(updatedReport.getComment());
+	        
+	        existingReport.setEncoder(updatedReport.getEncoder());
+	        existingReport.setInvestigationDetails(updatedReport.getInvestigationDetails());
 	        existingReport.setComplaint(updatedReport.getComplaint());
 	        existingReport.setComplete(updatedReport.isComplete());
 	        existingReport.setReceived(null);

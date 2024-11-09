@@ -22,7 +22,7 @@ public class StudentRecordEntity {
 	private String incident_date;
 	private String time;
 	private String monitored_record;
-	private String remarks;
+	private String details;
 	private String sanction;
 	
 	
@@ -35,7 +35,7 @@ public class StudentRecordEntity {
 	}
 
 	public StudentRecordEntity(Long recordId, Long id, String record_date, String incident_date, String time,
-			String monitored_record, String remarks, String sanction, StudentEntity student) {
+			String monitored_record, String details, String sanction, StudentEntity student) {
 		super();
 		this.recordId = recordId;
 		this.id = id;
@@ -43,7 +43,7 @@ public class StudentRecordEntity {
 		this.incident_date = incident_date;
 		this.time = time;
 		this.monitored_record = monitored_record;
-		this.remarks = remarks;
+		this.details = details;
 		this.sanction = sanction;
 		this.student = student;
 	}
@@ -96,12 +96,12 @@ public class StudentRecordEntity {
 		this.monitored_record = monitored_record;
 	}
 
-	public String getRemarks() {
-		return remarks;
+	public String getDetails() {
+		return details;
 	}
 
-	public void setRemarks(String remarks) {
-		this.remarks = remarks;
+	public void setDetails(String details) {
+		this.details = details;
 	}
 
 	public String getSanction() {
@@ -120,5 +120,6 @@ public class StudentRecordEntity {
 		this.student = student;
 	}
 
+	
 	
 }

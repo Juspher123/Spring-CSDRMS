@@ -23,7 +23,6 @@ public class SuspensionEntity {
 	private String startDate;
 	private String endDate;  
 	private String returnDate;
-	private String offense;
 	private boolean viewedByPrincipal = false;
 	private boolean approved = false;
 	 
@@ -36,8 +35,7 @@ public class SuspensionEntity {
 	}
 
 	public SuspensionEntity(Long suspensionId, Long reportId, String dateSubmitted, int days, String startDate,
-			String endDate, String returnDate, String offense, boolean viewedByPrincipal, boolean approved,
-			ReportEntity reportEntity) {
+			String endDate, String returnDate, boolean viewedByPrincipal, boolean approved, ReportEntity reportEntity) {
 		super();
 		this.suspensionId = suspensionId;
 		this.reportId = reportId;
@@ -46,7 +44,6 @@ public class SuspensionEntity {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.returnDate = returnDate;
-		this.offense = offense;
 		this.viewedByPrincipal = viewedByPrincipal;
 		this.approved = approved;
 		this.reportEntity = reportEntity;
@@ -106,14 +103,6 @@ public class SuspensionEntity {
 
 	public void setReturnDate(String returnDate) {
 		this.returnDate = returnDate;
-	}
-
-	public String getOffense() {
-		return offense;
-	}
-
-	public void setOffense(String offense) {
-		this.offense = offense;
 	}
 
 	public boolean isViewedByPrincipal() {

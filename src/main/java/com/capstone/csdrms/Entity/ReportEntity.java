@@ -29,7 +29,7 @@ public class ReportEntity {
     private String complainant;
     private String received;
     
-    private String comment;
+    private String investigationDetails;
     private boolean complete;
 
     @OneToOne
@@ -56,7 +56,7 @@ public class ReportEntity {
 
 
 	public ReportEntity(Long reportId, Long recordId, Long adviserId, Long encoder, String date, String time,
-			String complaint, String complainant, String received, String comment, boolean complete,
+			String complaint, String complainant, String received, String investigationDetails, boolean complete,
 			StudentRecordEntity record, UserEntity adviser, UserEntity userComplainant, UserEntity userEncoder) {
 		super();
 		this.reportId = reportId;
@@ -68,7 +68,7 @@ public class ReportEntity {
 		this.complaint = complaint;
 		this.complainant = complainant;
 		this.received = received;
-		this.comment = comment;
+		this.investigationDetails = investigationDetails;
 		this.complete = complete;
 		this.record = record;
 		this.adviser = adviser;
@@ -186,14 +186,14 @@ public class ReportEntity {
 
 
 
-	public String getComment() {
-		return comment;
+	public String getInvestigationDetails() {
+		return investigationDetails;
 	}
 
 
 
-	public void setComment(String comment) {
-		this.comment = comment;
+	public void setInvestigationDetails(String investigationDetails) {
+		this.investigationDetails = investigationDetails;
 	}
 
 

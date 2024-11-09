@@ -23,7 +23,10 @@ public class StudentEntity {
 	private int grade;
 	private String section;
 	private String gender;
+	private String email;
+	private String homeAddress;
 	private String contactNumber;
+	private String emergencyNumber;
 	
 	@Column(nullable = false)
 	private String schoolYear;
@@ -34,8 +37,8 @@ public class StudentEntity {
 		super();
 	}
 
-	public StudentEntity(Long id, String sid, String name, int grade, String section, String gender,
-			String contactNumber, String schoolYear, int current) {
+	public StudentEntity(Long id, String sid, String name, int grade, String section, String gender, String email,
+			String homeAddress, String contactNumber, String emergencyNumber, String schoolYear, int current) {
 		super();
 		this.id = id;
 		this.sid = sid;
@@ -43,7 +46,10 @@ public class StudentEntity {
 		this.grade = grade;
 		this.section = section;
 		this.gender = gender;
+		this.email = email;
+		this.homeAddress = homeAddress;
 		this.contactNumber = contactNumber;
+		this.emergencyNumber = emergencyNumber;
 		this.schoolYear = schoolYear;
 		this.current = current;
 	}
@@ -96,12 +102,36 @@ public class StudentEntity {
 		this.gender = gender;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getHomeAddress() {
+		return homeAddress;
+	}
+
+	public void setHomeAddress(String homeAddress) {
+		this.homeAddress = homeAddress;
+	}
+
 	public String getContactNumber() {
 		return contactNumber;
 	}
 
 	public void setContactNumber(String contactNumber) {
 		this.contactNumber = contactNumber;
+	}
+
+	public String getEmergencyNumber() {
+		return emergencyNumber;
+	}
+
+	public void setEmergencyNumber(String emergencyNumber) {
+		this.emergencyNumber = emergencyNumber;
 	}
 
 	public String getSchoolYear() {
@@ -120,5 +150,6 @@ public class StudentEntity {
 		this.current = current;
 	}
 
+	
 	
 }
