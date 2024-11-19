@@ -9,7 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.capstone.csdrms.Entity.UserEntity;
-import com.capstone.csdrms.Repository.ReportRepository;
 import com.capstone.csdrms.Repository.TimeLogRepository;
 import com.capstone.csdrms.Repository.UserRepository;
 
@@ -23,11 +22,7 @@ public class UserService {
 
 
 	@Autowired
-	UserRepository userRepository;
-	
-	@Autowired
-	ReportService reportService;
-	
+	UserRepository userRepository;	
 	
 	@Autowired
 	TimeLogService timeLogService;
@@ -101,7 +96,7 @@ public class UserService {
 	            existingUser.setUsername(updatedUser.getUsername());
 	            existingUser.setFirstname(updatedUser.getFirstname());
 	            existingUser.setLastname(updatedUser.getLastname());;
-	            
+	            existingUser.setEmail(updatedUser.getEmail());           
 	            if(existingUser.getUserType() == 3) {
 	            	existingUser.setGrade(updatedUser.getGrade());
 		            existingUser.setSection(updatedUser.getSection());

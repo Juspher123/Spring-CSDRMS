@@ -15,19 +15,14 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.capstone.csdrms.Entity.CaseEntity;
-import com.capstone.csdrms.Entity.FollowupEntity;
 import com.capstone.csdrms.Entity.SuspensionEntity;
 import com.capstone.csdrms.Entity.StudentEntity;
-import com.capstone.csdrms.Entity.StudentRecordEntity;
-import com.capstone.csdrms.Repository.CaseRepository;
-import com.capstone.csdrms.Repository.FollowupRepository;
-import com.capstone.csdrms.Repository.ReportRepository;
+import com.capstone.csdrms.Entity.RecordEntity;
 import com.capstone.csdrms.Repository.SuspensionRepository;
 
 import jakarta.transaction.Transactional;
 
-import com.capstone.csdrms.Repository.StudentRecordRepository;
+import com.capstone.csdrms.Repository.RecordRepository;
 import com.capstone.csdrms.Repository.StudentRepository;
 
 
@@ -39,14 +34,7 @@ public class StudentService {
 	StudentRepository studentRepository;
 	
 	@Autowired
-	StudentRecordRepository studentRecordRepository;
-	
-	@Autowired
-	ReportRepository reportRepository;
-//	
-	
-//	@Autowired
-//	CaseRepository caserepo;
+	RecordRepository recordRepository;
 	
 	@Autowired
     SuspensionRepository suspensionRepository;
@@ -54,8 +42,6 @@ public class StudentService {
 	@Autowired
 	ActivityLogService activityLogService;
 	
-//	@Autowired
-//	FollowupRepository followuprepo;
 	 
 	 
 	public boolean studentExists(String sid, String schoolYear) {
@@ -105,7 +91,7 @@ public class StudentService {
 	        existingStudent.setGender(studentDetails.getGender());
 	        existingStudent.setEmail(studentDetails.getEmail());
 	        existingStudent.setHomeAddress(studentDetails.getHomeAddress());
-	        existingStudent.setContactNumber(studentDetails.getContactNumber());
+	       // existingStudent.setContactNumber(studentDetails.getContactNumber());
 	        existingStudent.setEmergencyNumber(studentDetails.getEmergencyNumber());
 	        existingStudent.setSchoolYear(studentDetails.getSchoolYear());
 	        existingStudent.setCurrent(studentDetails.getCurrent());
@@ -123,9 +109,8 @@ public class StudentService {
 			 StudentEntity student = optionalStudent.get();
 			 String sid = student.getSid();
 			 
-			 suspensionRepository.deleteAllByReportEntity_Record_Id(id);
-			 reportRepository.deleteAllByRecord_Id(id);
-			 studentRecordRepository.deleteAllById(id);
+			 suspensionRepository.deleteAllByRecord_Id(id);
+			 recordRepository.deleteAllById(id);
 			 studentRepository.delete(student);
 			 
 			 activityLogService.logActivity("Student Deleted", "Student " + student.getSid() + " (" +student.getName()+")" + " and its associated records, reports, and suspesion deleted by SSO", initiator);
@@ -219,6 +204,12 @@ public class StudentService {
         }
     }
 	
+	public String formatSection(String section) {
+	    // Use regex to remove any numeric suffix after a dash
+	    return section.replaceAll("-\\d+$", "");
+	}
+
+	
 	public void importStudentData(MultipartFile file, String schoolYear) throws Exception {
 	    List<StudentEntity> students = new ArrayList<>();
 	    
@@ -279,17 +270,18 @@ public class StudentService {
 	            int grade = getGrade(gradeNumber);
 	            student.setGrade(grade);
 	            
-	            student.setGender(row.getCell(6).getStringCellValue());
+	            student.setSection(formatSection(row.getCell(6).getStringCellValue()));
 	            
-	            student.setHomeAddress(row.getCell(7).getStringCellValue());
+	            student.setGender(row.getCell(7).getStringCellValue());
 	            
-	            student.setContactNumber(row.getCell(8).getStringCellValue());
+	            student.setHomeAddress(row.getCell(8).getStringCellValue());
+	            
+	            //student.setContactNumber(row.getCell(9).getStringCellValue());
 	            
 	            student.setEmail(row.getCell(9).getStringCellValue());
 	            
 	            student.setEmergencyNumber(row.getCell(10).getStringCellValue());
 	            
-	            student.setSection(row.getCell(11).getStringCellValue());
 	            
 	            // Handle School Year
 	            student.setSchoolYear(schoolYear);

@@ -12,20 +12,20 @@ import com.capstone.csdrms.Entity.SuspensionEntity;
 @Repository
 public interface SuspensionRepository extends JpaRepository<SuspensionEntity, Long> {
 	
-	List<SuspensionEntity> findByReportEntity_Record_Student_Id(Long id);
+	List<SuspensionEntity> findByRecord_Student_Id(Long id);
 	
-	List<SuspensionEntity> findAllByReportEntity_Record_Student_GradeAndReportEntity_Record_Student_SectionAndReportEntity_Record_Student_SchoolYear(int grade, String section, String schoolYear);
-	
-	
+	List<SuspensionEntity> findAllByRecord_Student_GradeAndRecord_Student_SectionAndRecord_Student_SchoolYear(int grade, String section, String schoolYear);
 	
 	
-	Optional<SuspensionEntity> findByReportId(Long reportId);
 	
-	List<SuspensionEntity> findAllByReportEntity_Complainant(String username);
 	
-	void deleteAllByReportEntity_Complainant(String complainant);
+	Optional<SuspensionEntity> findByRecordId(Long reportId);
 	
-	void deleteAllByReportEntity_Record_Id(Long id);
+	List<SuspensionEntity> findAllByRecord_Complainant(String username);
+	
+	void deleteAllByRecord_Complainant(String complainant);
+	
+	void deleteAllByRecord_Id(Long id);
 
 	Optional<SuspensionEntity> findById(Long suspensionId);
 

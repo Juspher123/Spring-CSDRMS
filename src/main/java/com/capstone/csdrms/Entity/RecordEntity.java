@@ -10,42 +10,59 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="tblstudentRecord")
-public class StudentRecordEntity {
+@Table(name="tblrecord")
+public class RecordEntity {
  
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long recordId;
-	 
+	
+	//The auto-generated id of student
 	private Long id;
+	
+	//equivalent to userId
+	private Long encoderId;
+	
 	private String record_date;
 	private String incident_date;
 	private String time;
 	private String monitored_record;
-	private String details;
+	private String remarks;
 	private String sanction;
-	
-	
+	private String complainant;
+	private String caseDetails;
+	private int complete;
+		
 	@ManyToOne
 	@JoinColumn(name = "id", referencedColumnName = "id", insertable = false, updatable = false)
 	private StudentEntity student;
 	
-	public StudentRecordEntity() {
+	@ManyToOne
+    @JoinColumn(name = "encoderId", referencedColumnName = "userId", insertable = false, updatable = false)
+    private UserEntity encoder;
+	
+	public RecordEntity() {
 		super();
 	}
 
-	public StudentRecordEntity(Long recordId, Long id, String record_date, String incident_date, String time,
-			String monitored_record, String details, String sanction, StudentEntity student) {
+	public RecordEntity(Long recordId, Long id, Long encoderId, String record_date, String incident_date, String time,
+			String monitored_record, String remarks, String sanction, String complainant, String caseDetails,
+			int complete, StudentEntity student, UserEntity encoder) {
 		super();
 		this.recordId = recordId;
 		this.id = id;
+		this.encoderId = encoderId;
 		this.record_date = record_date;
 		this.incident_date = incident_date;
 		this.time = time;
 		this.monitored_record = monitored_record;
-		this.details = details;
+		this.remarks = remarks;
 		this.sanction = sanction;
+		this.complainant = complainant;
+		this.caseDetails = caseDetails;
+		this.complete = complete;
 		this.student = student;
+		this.encoder = encoder;
 	}
 
 	public Long getRecordId() {
@@ -62,6 +79,14 @@ public class StudentRecordEntity {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getEncoderId() {
+		return encoderId;
+	}
+
+	public void setEncoderId(Long encoderId) {
+		this.encoderId = encoderId;
 	}
 
 	public String getRecord_date() {
@@ -96,12 +121,12 @@ public class StudentRecordEntity {
 		this.monitored_record = monitored_record;
 	}
 
-	public String getDetails() {
-		return details;
+	public String getRemarks() {
+		return remarks;
 	}
 
-	public void setDetails(String details) {
-		this.details = details;
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 	public String getSanction() {
@@ -112,12 +137,44 @@ public class StudentRecordEntity {
 		this.sanction = sanction;
 	}
 
+	public String getComplainant() {
+		return complainant;
+	}
+
+	public void setComplainant(String complainant) {
+		this.complainant = complainant;
+	}
+
+	public String getCaseDetails() {
+		return caseDetails;
+	}
+
+	public void setCaseDetails(String caseDetails) {
+		this.caseDetails = caseDetails;
+	}
+
+	public int getComplete() {
+		return complete;
+	}
+
+	public void setComplete(int complete) {
+		this.complete = complete;
+	}
+
 	public StudentEntity getStudent() {
 		return student;
 	}
 
 	public void setStudent(StudentEntity student) {
 		this.student = student;
+	}
+
+	public UserEntity getEncoder() {
+		return encoder;
+	}
+
+	public void setEncoder(UserEntity encoder) {
+		this.encoder = encoder;
 	}
 
 	

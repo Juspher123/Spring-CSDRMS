@@ -17,7 +17,7 @@ public class SuspensionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long suspensionId;
 	
-	private Long reportId;
+	private Long recordId;
 	private String dateSubmitted;
 	private int days;
 	private String startDate;
@@ -27,18 +27,18 @@ public class SuspensionEntity {
 	private boolean approved = false;
 	 
 	@ManyToOne
-    @JoinColumn(name = "reportId", insertable = false, updatable = false)
-    private ReportEntity reportEntity;
+    @JoinColumn(name = "recordId", insertable = false, updatable = false)
+    private RecordEntity record;
 	
 	public SuspensionEntity() {
 		super();
 	}
 
-	public SuspensionEntity(Long suspensionId, Long reportId, String dateSubmitted, int days, String startDate,
-			String endDate, String returnDate, boolean viewedByPrincipal, boolean approved, ReportEntity reportEntity) {
+	public SuspensionEntity(Long suspensionId, Long recordId, String dateSubmitted, int days, String startDate,
+			String endDate, String returnDate, boolean viewedByPrincipal, boolean approved, RecordEntity record) {
 		super();
 		this.suspensionId = suspensionId;
-		this.reportId = reportId;
+		this.recordId = recordId;
 		this.dateSubmitted = dateSubmitted;
 		this.days = days;
 		this.startDate = startDate;
@@ -46,7 +46,7 @@ public class SuspensionEntity {
 		this.returnDate = returnDate;
 		this.viewedByPrincipal = viewedByPrincipal;
 		this.approved = approved;
-		this.reportEntity = reportEntity;
+		this.record = record;
 	}
 
 	public Long getSuspensionId() {
@@ -57,12 +57,12 @@ public class SuspensionEntity {
 		this.suspensionId = suspensionId;
 	}
 
-	public Long getReportId() {
-		return reportId;
+	public Long getRecordId() {
+		return recordId;
 	}
 
-	public void setReportId(Long reportId) {
-		this.reportId = reportId;
+	public void setRecordId(Long recordId) {
+		this.recordId = recordId;
 	}
 
 	public String getDateSubmitted() {
@@ -121,13 +121,14 @@ public class SuspensionEntity {
 		this.approved = approved;
 	}
 
-	public ReportEntity getReportEntity() {
-		return reportEntity;
+	public RecordEntity getRecord() {
+		return record;
 	}
 
-	public void setReportEntity(ReportEntity reportEntity) {
-		this.reportEntity = reportEntity;
+	public void setRecord(RecordEntity record) {
+		this.record = record;
 	}
 
+	
 	
 }

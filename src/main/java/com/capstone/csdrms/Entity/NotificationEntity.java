@@ -18,7 +18,7 @@ public class NotificationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notificationId;
 	
-	private Long reportId;
+	private Long recordId;
 
     @Column(name = "message", nullable = false)
     private String message;
@@ -27,15 +27,15 @@ public class NotificationEntity {
     private LocalDateTime createdAt;
     
     @ManyToOne
-	@JoinColumn(name = "reportId", referencedColumnName = "reportId", insertable = false, updatable = false)
-    private ReportEntity report;
+	@JoinColumn(name = "recordId", referencedColumnName = "recordId", insertable = false, updatable = false)
+    private RecordEntity record;
 
     
     
     public NotificationEntity() {}
 
-    public NotificationEntity(Long reportId, String message) {
-    	this.reportId = reportId;
+    public NotificationEntity(Long recordId, String message) {
+    	this.recordId = recordId;
         this.message = message;
         this.createdAt = LocalDateTime.now();
     }
@@ -48,12 +48,12 @@ public class NotificationEntity {
 		this.notificationId = notificationId;
 	}
 
-	public Long getReportId() {
-		return reportId;
+	public Long getRecordId() {
+		return recordId;
 	}
 
-	public void setReportId(Long reportId) {
-		this.reportId = reportId;
+	public void setRecordId(Long recordId) {
+		this.recordId = recordId;
 	}
 
 	public String getMessage() {
@@ -72,12 +72,12 @@ public class NotificationEntity {
 		this.createdAt = createdAt;
 	}
 
-	public ReportEntity getReport() {
-		return report;
+	public RecordEntity getRecord() {
+		return record;
 	}
 
-	public void setReport(ReportEntity report) {
-		this.report = report;
+	public void setReport(RecordEntity record) {
+		this.record = record;
 	}
 
 	

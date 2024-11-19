@@ -49,9 +49,9 @@ public class SuspensionController {
     	suspensionService.markSuspensionsAsViewedForPrincipal(suspensionId,initiator);
     }
     
-    @GetMapping("/getSuspensionByReport/{reportId}")
-    public ResponseEntity<SuspensionEntity> getSuspensionByReportId(@PathVariable Long reportId) {
-        return suspensionService.getSuspensionByReportId(reportId)
+    @GetMapping("/getSuspensionByRecord/{recordId}")
+    public ResponseEntity<SuspensionEntity> getSuspensionByReportId(@PathVariable Long recordId) {
+        return suspensionService.getSuspensionByRecordId(recordId)
                    .map(ResponseEntity::ok)
                    .orElseGet(() -> ResponseEntity.notFound().build());
     }

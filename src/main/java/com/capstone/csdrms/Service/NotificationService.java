@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.capstone.csdrms.Entity.NotificationEntity;
-import com.capstone.csdrms.Entity.ReportEntity;
+import com.capstone.csdrms.Entity.RecordEntity;
 import com.capstone.csdrms.Entity.UserEntity;
 import com.capstone.csdrms.Entity.UserNotification;
 import com.capstone.csdrms.Repository.NotificationRepository;
-import com.capstone.csdrms.Repository.ReportRepository;
+import com.capstone.csdrms.Repository.RecordRepository;
 import com.capstone.csdrms.Repository.UserNotificationRepository;
 import com.capstone.csdrms.Repository.UserRepository;
 
@@ -29,16 +29,17 @@ public class NotificationService {
 	    @Autowired
 	    private UserNotificationRepository userNotificationRepository;
 	    
-	    @Autowired 
-	    private ReportRepository reportRepository;
+	    @Autowired
+	    private RecordRepository recordRepository;
+	    
 
 	    // Create a notification and associate it with specific user types
-	    public NotificationEntity createNotificationForUserType(String type,Long reportId, String message, List<Integer> userTypes, Long initiator, Integer grade, String section, String schoolYear) {
-	        NotificationEntity notification = new NotificationEntity(reportId,message);
+	    public NotificationEntity createNotificationForUserType(String type,Long recordId, String message, List<Integer> userTypes, Long initiator, Integer grade, String section, String schoolYear) {
+	        NotificationEntity notification = new NotificationEntity(recordId,message);
 	        notification = notificationRepository.save(notification);
 	        
-	        Optional<ReportEntity> reportOptional = reportRepository.findById(reportId);
-	        String complainant = reportOptional.get().getComplainant();
+	        Optional<RecordEntity> recordOptional = recordRepository.findById(recordId);
+	        Long encoderId = recordOptional.get().getEncoderId();
 	        
 
 	     // Find users by their userType and create UserNotification records
@@ -101,8 +102,8 @@ public class NotificationService {
 	                        }
 	                    });
 		            
-		            	 Optional<UserEntity> complainantAdviser = userRepository.findByUsernameAndDeleted(complainant, false);
-		            	 complainantAdviser.ifPresent(user -> {
+		            	 Optional<UserEntity> encoderAdviser = userRepository.findByUserIdAndDeleted(encoderId, false);
+		            	 encoderAdviser.ifPresent(user -> {
 		                        if (!users.contains(user) && user.getUserType() == 3) {  // Avoid duplicate entry
 		                            users.add(user);
 		                        }
@@ -117,7 +118,7 @@ public class NotificationService {
 	            			Optional<UserEntity> optionalUser = userRepository.findByUserTypeAndDeleted(userType, false);
 		            		
 	            			optionalUser.ifPresent(user -> {
-		                        if (!users.contains(user) && user.getUsername().equals(complainant)) {  
+		                        if (!users.contains(user) && user.getUserId().equals(encoderId)) {  
 		                            users.add(user);
 		                        }
 		                    });

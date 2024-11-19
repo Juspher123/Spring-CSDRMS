@@ -17,41 +17,41 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
-import com.capstone.csdrms.Entity.StudentRecordEntity;
-import com.capstone.csdrms.Service.StudentRecordService;
+import com.capstone.csdrms.Entity.RecordEntity;
+import com.capstone.csdrms.Service.RecordService;
 
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/student-record")
-public class StudentRecordController {
+@RequestMapping("/record")
+public class RecordController {
  
 	 @Autowired
-	StudentRecordService studentRecordService;
+	RecordService recordService;
 	
-	@PostMapping("/insertRecord/{initiator}")
-	public StudentRecordEntity insertStudentRecord(@RequestBody StudentRecordEntity studentRecord, @PathVariable Long initiator) {
-		return studentRecordService.insertStudentRecord(studentRecord, initiator);
+	@PostMapping("/insert/{initiator}")
+	public RecordEntity insertRecord(@RequestBody RecordEntity studentRecord, @PathVariable Long initiator) {
+		return recordService.insertRecord(studentRecord, initiator);
 	}
 	
-	@GetMapping("/getAllStudentRecords")
-	public List<StudentRecordEntity> getAllStudentRecords(){
-		return studentRecordService.getAllStudentRecords();
+	@GetMapping("/getAllRecords")
+	public List<RecordEntity> getAllStudentRecords(){
+		return recordService.getAllStudentRecords();
 	}
 
 	@GetMapping("/getStudentRecords/{sid}")
-	public List<StudentRecordEntity> getStudentRecordsBySid(@PathVariable String sid){
-		return studentRecordService.getStudentRecordsBySid(sid);
+	public List<RecordEntity> getStudentRecordsBySid(@PathVariable String sid){
+		return recordService.getStudentRecordsBySid(sid);
 	}
 	
 	@PutMapping("/update/{recordId}/{initiator}")
-    public ResponseEntity<StudentRecordEntity> updateStudentRecord(
+    public ResponseEntity<RecordEntity> updateStudentRecord(
             @PathVariable Long recordId, 
-            @RequestBody StudentRecordEntity updatedRecord,
+            @RequestBody RecordEntity updatedRecord,
             @PathVariable Long initiator) {
         try {
             // Call the service to update the student record
-            StudentRecordEntity updated = studentRecordService.updateStudentRecord(recordId, updatedRecord, initiator);
+            RecordEntity updated = recordService.updateStudentRecord(recordId, updatedRecord, initiator);
             return new ResponseEntity<>(updated, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);  // Handle not found or other exceptions
@@ -71,7 +71,7 @@ public class StudentRecordController {
 	 @DeleteMapping("/delete/{recordId}/{initiator}")
 	    public ResponseEntity<String> deleteStudentRecord(@PathVariable Long recordId, @PathVariable Long initiator) {
 	        try {
-	        	studentRecordService.deleteStudentRecord(recordId, initiator);
+	        	recordService.deleteStudentRecord(recordId, initiator);
 	            return ResponseEntity.ok("Student record deleted successfully.");
 	        } catch (RuntimeException e) {
 	            return ResponseEntity.status(404).body(e.getMessage());
@@ -81,8 +81,18 @@ public class StudentRecordController {
 	    }
 	
 	@GetMapping("/getStudentRecordsByAdviser")
-	public List<StudentRecordEntity> getAllStudentRecordsByAdviser(@RequestParam int grade, @RequestParam String section,@RequestParam String schoolYear ) {
-	    return studentRecordService.getAllStudentRecordsByAdviser(grade, section, schoolYear);
+	public List<RecordEntity> getAllStudentRecordsByAdviser(@RequestParam int grade, @RequestParam String section,@RequestParam String schoolYear) {
+	    return recordService.getAllStudentRecordsByAdviser(grade, section, schoolYear);
+	}
+	
+	@GetMapping("/getRecordsByAdviser")
+	public List<RecordEntity> getAllRecordsByAdviser(@RequestParam int grade, @RequestParam String section,@RequestParam String schoolYear, @RequestParam Long encoderId ) {
+	    return recordService.getAllRecordsByAdviser(grade, section, schoolYear, encoderId);
+	}
+	
+	@GetMapping("/getAllRecordsByEncoderId")
+	public List<RecordEntity> getAllRecordsByEncoderId(@RequestParam Long encoderId){
+		return recordService.getAllRecordsByEncoderId(encoderId);
 	}
 	
 }
