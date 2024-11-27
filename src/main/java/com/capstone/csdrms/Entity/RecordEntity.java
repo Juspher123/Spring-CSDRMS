@@ -30,7 +30,8 @@ public class RecordEntity {
 	private String remarks;
 	private String sanction;
 	private String complainant;
-	private String caseDetails;
+	private String complaint;
+	private String investigationDetails;
 	private int complete;
 		
 	@ManyToOne
@@ -46,8 +47,8 @@ public class RecordEntity {
 	}
 
 	public RecordEntity(Long recordId, Long id, Long encoderId, String record_date, String incident_date, String time,
-			String monitored_record, String remarks, String sanction, String complainant, String caseDetails,
-			int complete, StudentEntity student, UserEntity encoder) {
+			String monitored_record, String remarks, String sanction, String complainant, String complaint,
+			String investigationDetails, int complete, StudentEntity student, UserEntity encoder) {
 		super();
 		this.recordId = recordId;
 		this.id = id;
@@ -59,7 +60,8 @@ public class RecordEntity {
 		this.remarks = remarks;
 		this.sanction = sanction;
 		this.complainant = complainant;
-		this.caseDetails = caseDetails;
+		this.complaint = complaint;
+		this.investigationDetails = investigationDetails;
 		this.complete = complete;
 		this.student = student;
 		this.encoder = encoder;
@@ -145,12 +147,20 @@ public class RecordEntity {
 		this.complainant = complainant;
 	}
 
-	public String getCaseDetails() {
-		return caseDetails;
+	public String getComplaint() {
+		return complaint;
 	}
 
-	public void setCaseDetails(String caseDetails) {
-		this.caseDetails = caseDetails;
+	public void setComplaint(String complaint) {
+		this.complaint = complaint;
+	}
+
+	public String getInvestigationDetails() {
+		return investigationDetails;
+	}
+
+	public void setInvestigationDetails(String investigationDetails) {
+		this.investigationDetails = investigationDetails;
 	}
 
 	public int getComplete() {
@@ -176,7 +186,6 @@ public class RecordEntity {
 	public void setEncoder(UserEntity encoder) {
 		this.encoder = encoder;
 	}
-
 	
 	
 }

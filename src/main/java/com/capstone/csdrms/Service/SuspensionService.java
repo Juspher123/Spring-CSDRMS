@@ -50,12 +50,12 @@ public class SuspensionService {
 	       
 	        
 	        // Automatically insert a student report after the sanction is added
-	        insertStudentRecordFromSanction(savedSanction);
-	        activityLogService.logActivity("Student Suspension", "Student " + savedSanction.getRecord().getStudent().getSid() + " (" +savedSanction.getRecord().getStudent().getName()+")" + " has been suspended by SSO", initiator);
+	        RecordEntity record = insertStudentRecordFromSanction(savedSanction);
+	        activityLogService.logActivity("Student Suspension", "Student " + record.getStudent().getSid() + " (" +record.getStudent().getName()+")" + " has been suspended by SSO", initiator);
 	        
 	        
 	     // 1. Define the notification message
-	        String notificationMessage = "Student " + savedSanction.getRecord().getStudent().getName() + " (Grade " + savedSanction.getRecord().getStudent().getGrade() + ", Section " + savedSanction.getRecord().getStudent().getSection() + ") has been suspended.";
+	        String notificationMessage = "Student " + record.getStudent().getName() + " (Grade " + record.getStudent().getGrade() + ", Section " + record.getStudent().getSection() + ") has been suspended.";
 
 	        // 2. Set the user types who should receive the notification
 	        List<Integer> userTypes = new ArrayList<>();
@@ -66,30 +66,23 @@ public class SuspensionService {
 	        userTypes.add(6);
 
 	        // 3. Call notification service to create the notification for specific users
-	        notificationService.createNotificationForUserType("Student Suspension",savedSanction.getRecordId() ,notificationMessage, userTypes, initiator, savedSanction.getRecord().getStudent().getGrade(), savedSanction.getRecord().getStudent().getSection(), savedSanction.getRecord().getStudent().getSchoolYear());
+	        notificationService.createNotificationForUserType("Student Suspension",record.getRecordId() ,notificationMessage, userTypes, initiator, record.getStudent().getGrade(), record.getStudent().getSection(),record.getStudent().getSchoolYear());
 	        
 	        return savedSanction;
 	    } 
 	    
-	 private void insertStudentRecordFromSanction(SuspensionEntity suspension) {
-		    StudentEntity student = suspension.getRecord().getStudent(); // Direct access to the student entity
+	 private RecordEntity insertStudentRecordFromSanction(SuspensionEntity suspension) {
+		 Optional<RecordEntity> recordOptional = recordRepository.findById(suspension.getRecordId());
 
-		    if (student != null) {
-		        // Prepare and set the fields of StudentReportEntity
-		        Optional<RecordEntity> studentRecordOptional = recordRepository.findById(suspension.getRecordId());
 		        
-		        RecordEntity studentRecord = studentRecordOptional.orElseGet(RecordEntity::new);
+		        RecordEntity record = recordOptional.get();
 		        
 		        String sanction = "Suspended for " + suspension.getDays()+" days starting from "+ suspension.getStartDate() + " to " +suspension.getEndDate() + " and will be return at " +suspension.getReturnDate() ;      
 
-		        studentRecord.setSanction(sanction);
+		        record.setSanction(sanction);
 		        // Save the student record
-		        recordRepository.save(studentRecord);
-		    } else {
-		        throw new IllegalArgumentException("Student not found for the given sanction.");
-		    }
-		}
-	    
+		        return recordRepository.save(record);
+    } 
 	    
 	public List<SuspensionEntity> getAllSuspensions(){
 		return suspensionRepository.findAll();
