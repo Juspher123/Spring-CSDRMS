@@ -93,7 +93,12 @@ public class RecordService {
             RecordEntity existingRecord = existingRecordOpt.get();
             
             existingRecord.setMonitored_record(updatedRecord.getMonitored_record());
+            existingRecord.setRemarks(updatedRecord.getRemarks());
             existingRecord.setSanction(updatedRecord.getSanction());
+            existingRecord.setComplainant(updatedRecord.getComplainant());
+            existingRecord.setComplaint(updatedRecord.getComplaint());
+            existingRecord.setInvestigationDetails(updatedRecord.getInvestigationDetails());
+            existingRecord.setComplete(updatedRecord.getComplete());
             
             // Save the updated record
             activityLogService.logActivity("Update Record", "Record " + recordId + " updated by SSO", initator);
@@ -126,7 +131,7 @@ public class RecordService {
 //		}
 //	}
 	
-	 public void deleteStudentRecord(Long recordId, Long initiator) {
+	 public void deleteRecord(Long recordId, Long initiator) {
 		 boolean suspensionExist = false;
 	       
 	        	 Optional<SuspensionEntity> suspension = suspensionRepository.findByRecordId(recordId);

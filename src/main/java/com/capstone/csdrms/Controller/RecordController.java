@@ -71,7 +71,7 @@ public class RecordController {
 	 @DeleteMapping("/delete/{recordId}/{initiator}")
 	    public ResponseEntity<String> deleteStudentRecord(@PathVariable Long recordId, @PathVariable Long initiator) {
 	        try {
-	        	recordService.deleteStudentRecord(recordId, initiator);
+	        	recordService.deleteRecord(recordId, initiator);
 	            return ResponseEntity.ok("Student record deleted successfully.");
 	        } catch (RuntimeException e) {
 	            return ResponseEntity.status(404).body(e.getMessage());

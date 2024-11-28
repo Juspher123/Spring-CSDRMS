@@ -32,6 +32,7 @@ public class RecordEntity {
 	private String complainant;
 	private String complaint;
 	private String investigationDetails;
+	private int type;
 	private int complete;
 		
 	@ManyToOne
@@ -48,7 +49,7 @@ public class RecordEntity {
 
 	public RecordEntity(Long recordId, Long id, Long encoderId, String record_date, String incident_date, String time,
 			String monitored_record, String remarks, String sanction, String complainant, String complaint,
-			String investigationDetails, int complete, StudentEntity student, UserEntity encoder) {
+			String investigationDetails, int type, int complete, StudentEntity student, UserEntity encoder) {
 		super();
 		this.recordId = recordId;
 		this.id = id;
@@ -62,6 +63,7 @@ public class RecordEntity {
 		this.complainant = complainant;
 		this.complaint = complaint;
 		this.investigationDetails = investigationDetails;
+		this.type = type;
 		this.complete = complete;
 		this.student = student;
 		this.encoder = encoder;
@@ -163,6 +165,14 @@ public class RecordEntity {
 		this.investigationDetails = investigationDetails;
 	}
 
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
 	public int getComplete() {
 		return complete;
 	}
@@ -186,6 +196,8 @@ public class RecordEntity {
 	public void setEncoder(UserEntity encoder) {
 		this.encoder = encoder;
 	}
+
+	
 	
 	
 }

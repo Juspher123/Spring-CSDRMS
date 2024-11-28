@@ -42,47 +42,31 @@ public class SuspensionService {
 
 	@Transactional
 	public SuspensionEntity insertSuspension(SuspensionEntity suspension, Long initiator) {
-	    // Fetch the associated CaseEntity using the cid (case ID)
-	        
-	        // Save the sanction entity
-	        SuspensionEntity savedSanction = suspensionRepository.save(suspension);
-	        
-	       
-	        
-	        // Automatically insert a student report after the sanction is added
-	        RecordEntity record = insertStudentRecordFromSanction(savedSanction);
-	        activityLogService.logActivity("Student Suspension", "Student " + record.getStudent().getSid() + " (" +record.getStudent().getName()+")" + " has been suspended by SSO", initiator);
-	        
-	        
-	     // 1. Define the notification message
-	        String notificationMessage = "Student " + record.getStudent().getName() + " (Grade " + record.getStudent().getGrade() + ", Section " + record.getStudent().getSection() + ") has been suspended.";
+	    // Save the suspension entity
+	    SuspensionEntity savedSuspension = suspensionRepository.save(suspension);
 
-	        // 2. Set the user types who should receive the notification
-	        List<Integer> userTypes = new ArrayList<>();
-	        userTypes.add(1);
-	        userTypes.add(2);
-	        userTypes.add(3); 
-	        userTypes.add(5);
-	        userTypes.add(6);
-
-	        // 3. Call notification service to create the notification for specific users
-	        notificationService.createNotificationForUserType("Student Suspension",record.getRecordId() ,notificationMessage, userTypes, initiator, record.getStudent().getGrade(), record.getStudent().getSection(),record.getStudent().getSchoolYear());
-	        
-	        return savedSanction;
-	    } 
+	   Optional<RecordEntity> optionalRecord = recordRepository.findById(savedSuspension.getRecordId());
+	   RecordEntity record = optionalRecord.get();
 	    
-	 private RecordEntity insertStudentRecordFromSanction(SuspensionEntity suspension) {
-		 Optional<RecordEntity> recordOptional = recordRepository.findById(suspension.getRecordId());
+	    activityLogService.logActivity("Student Suspension", "Student " + record.getStudent().getSid() + " (" + record.getStudent().getName() + ") has been suspended by SSO", initiator);
 
-		        
-		        RecordEntity record = recordOptional.get();
-		        
-		        String sanction = "Suspended for " + suspension.getDays()+" days starting from "+ suspension.getStartDate() + " to " +suspension.getEndDate() + " and will be return at " +suspension.getReturnDate() ;      
+	    // Define the notification message
+	    String notificationMessage = "Student " + record.getStudent().getName() + " (Grade " + record.getStudent().getGrade() + ", Section " + record.getStudent().getSection() + ") has been suspended.";
 
-		        record.setSanction(sanction);
-		        // Save the student record
-		        return recordRepository.save(record);
-    } 
+	    // Set the user types who should receive the notification
+	    List<Integer> userTypes = new ArrayList<>();
+	    userTypes.add(1);
+	    userTypes.add(2);
+	    userTypes.add(3);
+	    userTypes.add(5);
+	    userTypes.add(6);
+
+	    // Create the notification
+	    notificationService.createNotificationForUserType("Student Suspension", record.getRecordId(), notificationMessage, userTypes, initiator, record.getStudent().getGrade(), record.getStudent().getSection(), record.getStudent().getSchoolYear());
+
+	    return savedSuspension;
+	}
+	    
 	    
 	public List<SuspensionEntity> getAllSuspensions(){
 		return suspensionRepository.findAll();
@@ -91,6 +75,11 @@ public class SuspensionService {
 	public List<SuspensionEntity> getAllSuspensionsByStudentId(Long id){
 		return suspensionRepository.findByRecord_Student_Id(id);
 	}
+	
+	public Optional<SuspensionEntity> getSuspension(Long suspensionId) {
+	    return suspensionRepository.findById(suspensionId);
+	}
+
 	
 	
 	
