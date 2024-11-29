@@ -163,6 +163,15 @@ public class SuspensionService {
 	            
 	         // 1. Define the notification message
 		        String notificationMessage = "Principal approve the suspension of " + suspension.getRecord().getStudent().getName() + " (Grade " + suspension.getRecord().getStudent().getGrade() + ", Section " + suspension.getRecord().getStudent().getSection() + ")";
+		        
+		        Optional<RecordEntity> optionalRecord = recordRepository.findById(suspension.getRecordId());
+		        if (optionalRecord.isPresent()) {
+		            RecordEntity record = optionalRecord.get();
+		            if(record.getType() == 2) {
+		            	 record.setComplete(1); // Mark the record as complete
+				         recordRepository.save(record);	
+		            }
+		        }
 
 		        // 2. Set the user types who should receive the notification
 		        List<Integer> userTypes = new ArrayList<>();
