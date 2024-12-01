@@ -1,6 +1,7 @@
 package com.capstone.csdrms.Controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,10 +51,14 @@ public class SuspensionController {
     }
     
     @GetMapping("/getSuspensionByRecord/{recordId}")
-    public ResponseEntity<SuspensionEntity> getSuspensionByReportId(@PathVariable Long recordId) {
-        return suspensionService.getSuspensionByRecordId(recordId)
-                   .map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<SuspensionEntity> getSuspensionByRecordId(@PathVariable Long recordId) {
+    	Optional<SuspensionEntity> suspension = suspensionService.getSuspensionByRecordId(recordId);
+        
+        if (suspension.isPresent()) {
+            return ResponseEntity.ok(suspension.get());
+        } else {
+            return ResponseEntity.noContent().build();  // No content instead of 404
+        }
     }
     
     @DeleteMapping("/delete/{suspensionId}/{initiator}")

@@ -142,7 +142,8 @@ public class SuspensionService {
 	        	 Optional<RecordEntity> optionalRecord = recordRepository.findById(suspension.get().getRecordId());
 	        	 if(optionalRecord.isPresent()) {
 	        		 RecordEntity record = optionalRecord.get();
-	        		 record.setComplete(0);;
+	        		 record.setSanction("");
+	        		 record.setComplete(0);
 	        		 recordRepository.save(record);
 	        	 }
 	            suspensionRepository.delete(suspension.get());
@@ -167,7 +168,7 @@ public class SuspensionService {
 		        Optional<RecordEntity> optionalRecord = recordRepository.findById(suspension.getRecordId());
 		        if (optionalRecord.isPresent()) {
 		            RecordEntity record = optionalRecord.get();
-		            if(record.getType() == 2) {
+		            if(record.getSource() == 2) {
 		            	 record.setComplete(1); // Mark the record as complete
 				         recordRepository.save(record);	
 		            }

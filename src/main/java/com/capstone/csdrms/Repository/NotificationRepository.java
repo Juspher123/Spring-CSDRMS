@@ -9,8 +9,8 @@ import com.capstone.csdrms.Entity.NotificationEntity;
 
 @Repository
 public interface NotificationRepository extends JpaRepository <NotificationEntity, Long>{
-	
-	
 
+	List<NotificationEntity> findByRecordId(Long recordId);
+	
 
 }

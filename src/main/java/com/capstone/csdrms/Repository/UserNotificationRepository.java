@@ -27,4 +27,6 @@ public interface UserNotificationRepository extends JpaRepository<UserNotificati
     @Modifying
     @Query("UPDATE UserNotification un SET un.viewed = true WHERE un.user.userId = :userId AND un.viewed = false")
     int markAllAsViewedForUser(Long userId);
+
+	List<UserNotification> findByNotification_NotificationId(Long notificationId);
 }

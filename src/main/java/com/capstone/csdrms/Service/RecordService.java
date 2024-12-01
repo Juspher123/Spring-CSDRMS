@@ -8,12 +8,16 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.capstone.csdrms.Entity.StudentEntity;
+import com.capstone.csdrms.Entity.NotificationEntity;
 import com.capstone.csdrms.Entity.RecordEntity;
 import com.capstone.csdrms.Entity.SuspensionEntity;
 import com.capstone.csdrms.Entity.UserEntity;
+import com.capstone.csdrms.Entity.UserNotification;
+import com.capstone.csdrms.Repository.NotificationRepository;
 import com.capstone.csdrms.Repository.RecordRepository;
 import com.capstone.csdrms.Repository.StudentRepository;
 import com.capstone.csdrms.Repository.SuspensionRepository;
+import com.capstone.csdrms.Repository.UserNotificationRepository;
 import com.capstone.csdrms.Repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -32,6 +36,12 @@ public class RecordService {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	UserNotificationRepository userNotificationRepository;
+	
+	@Autowired
+	NotificationRepository notificationRepository;
 	
 	@Autowired
     NotificationService notificationService;
@@ -140,6 +150,20 @@ public class RecordService {
 	 	        	suspensionExist = true;
 	 	            suspensionRepository.delete(suspension.get());
 	 	        }
+	 	        
+	 	       List<NotificationEntity> notifications = notificationRepository.findByRecordId(recordId);
+	 	      if (!notifications.isEmpty()) {
+	 	          // For each notification, delete associated UserNotifications first
+	 	          for (NotificationEntity notification : notifications) {
+	 	              List<UserNotification> userNotifications = userNotificationRepository.findByNotification_NotificationId(notification.getNotificationId());
+	 	              if (!userNotifications.isEmpty()) {
+	 	                  userNotificationRepository.deleteAll(userNotifications);
+	 	              }
+	 	          }
+	 	          
+	 	          // Now delete the notifications
+	 	          notificationRepository.deleteAll(notifications);
+	 	      }
 
 	        // Now delete the student record
 	        Optional<RecordEntity> studentRecord = recordRepository.findById(recordId);
