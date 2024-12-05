@@ -17,10 +17,7 @@ public interface UserNotificationRepository extends JpaRepository<UserNotificati
 	
 	// Fetch notifications for a specific user based on user ID
     List<UserNotification> findByUser_UserId(Long userId);
-
-    // Find a specific user-notification pair by userId and notificationId
-    Optional<UserNotification> findByUser_UserIdAndNotification_NotificationId(Long userId, Long notificationId);
-    
+ 
     List<UserNotification> findByUser_UserIdAndViewedFalse(Long userId);
 
     @Transactional
@@ -29,4 +26,5 @@ public interface UserNotificationRepository extends JpaRepository<UserNotificati
     int markAllAsViewedForUser(Long userId);
 
 	List<UserNotification> findByNotification_NotificationId(Long notificationId);
+
 }

@@ -39,12 +39,6 @@ public class SuspensionController {
 		return suspensionService.insertSuspension(suspension, initiator);
 	}
 	
-	@GetMapping("/getSuspensionsByStudentId/{id}")
-	public List<SuspensionEntity> getAllSuspensionsByStudentId(@PathVariable Long id){
-		return suspensionService.getAllSuspensionsByStudentId(id);
-	}
-	
-
     @PostMapping("/markAsViewedForPrincipal/{suspensionId}/{initiator}")
     public void markSuspensionsAsViewedForPrincipal(@PathVariable Long suspensionId, @PathVariable Long initiator ) {
     	suspensionService.markSuspensionsAsViewedForPrincipal(suspensionId,initiator);

@@ -12,11 +12,8 @@ import com.capstone.csdrms.Entity.SuspensionEntity;
 @Repository
 public interface SuspensionRepository extends JpaRepository<SuspensionEntity, Long> {
 	
-	List<SuspensionEntity> findByRecord_Student_Id(Long id);
 	
 	List<SuspensionEntity> findAllByRecord_Student_GradeAndRecord_Student_SectionAndRecord_Student_SchoolYear(int grade, String section, String schoolYear);
-	
-	
 	
 	
 	Optional<SuspensionEntity> findByRecordId(Long reportId);

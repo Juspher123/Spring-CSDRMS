@@ -36,11 +36,6 @@ public class StudentController {
 			return studentService.insertStudent(student, initiator);
 		}
 		
-		@GetMapping("/getAllStudents")
-		public List<StudentEntity> getAllStudents(){
-			return studentService.getAllStudents();
-		}
-		
 		@GetMapping("/getAllCurrentStudents")
 		public List<StudentEntity> getCurrentStudents(){
 			return studentService.getCurrentStudents();
@@ -79,21 +74,12 @@ public class StudentController {
 //			return sserv.deleteStudent(sid);
 //		}
 		
-		@GetMapping("/getCurrentStudent/{id}")
-		public Optional<StudentEntity> getCurrentStudentById(@PathVariable Long id) {
-			return studentService.getCurrentStudentById(id);
-		}
 		  
 		 @GetMapping("/getAllStudentsByAdviser")
 		 public List<StudentEntity> getStudentsByAdviser(@RequestParam int grade, @RequestParam String section,@RequestParam String schoolYear) {
 			return studentService.getStudentsByAdviser(grade, section, schoolYear); 
 		} 
-		
-		 
-		 @GetMapping("/getStudentById/{id}")
-		 public Optional<StudentEntity> getStudentById(@PathVariable Long id){
-			 return studentService.getStudentById(id);
-		 }
+				 
 		 
 		 @PostMapping("/import")
 		    public ResponseEntity<?> importStudentData(@RequestParam("file") MultipartFile file, @RequestParam String schoolYear) {

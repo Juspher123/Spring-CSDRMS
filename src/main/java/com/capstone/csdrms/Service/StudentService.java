@@ -42,7 +42,7 @@ public class StudentService {
 	@Autowired
 	ActivityLogService activityLogService;
 	
-	 
+	
 	 
 	public boolean studentExists(String sid, String schoolYear) {
 	    return studentRepository.existsBySidAndSchoolYear(sid, schoolYear);
@@ -65,11 +65,6 @@ public class StudentService {
 	    return studentRepository.save(student);
 	}
 	
-	public List<StudentEntity> getAllStudents(){
-		return studentRepository.findAll();
-	}
- 
-	 
 	public List<StudentEntity> getCurrentStudents(){
 		return studentRepository.findAllByCurrent(1);
 	}
@@ -180,14 +175,7 @@ public class StudentService {
 ////	        return "Student " + sid + " does not exist";
 ////	    }
 //	}
-	
-	public Optional<StudentEntity> getCurrentStudentById(Long id) {
-		return studentRepository.findByIdAndCurrent(id, 1);
-	}
-	
-	public Optional<StudentEntity> getStudentById(Long id){
-		return studentRepository.findById(id);
-	}
+
 	
 	public static int getGrade(int number) {
         switch (number) {

@@ -46,16 +46,6 @@ public class NotificationController {
         List<UserNotification> notifications = notificationService.getNotificationsForUser(userId);
         return ResponseEntity.ok(notifications);
     }
-
-    // Endpoint to mark a notification as read for a specific user
-    @PostMapping("/{notificationId}/user/{userId}/mark-as-view")
-    public ResponseEntity<UserNotification> markAsViewForUser(
-            @PathVariable Long userId,
-            @PathVariable Long notificationId) {
-        return notificationService.markAsViewForUser(userId, notificationId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
     
     @PostMapping("/user/{userId}/mark-all-as-viewed")
     public ResponseEntity<String> markAllAsViewedForUser(@PathVariable Long userId) {

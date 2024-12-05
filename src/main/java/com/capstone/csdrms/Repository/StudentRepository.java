@@ -14,8 +14,7 @@ import com.capstone.csdrms.Entity.StudentEntity;
 @Repository
 public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
 
-//	Optional<StudentEntity> findBySid(String sid);
-	Optional<StudentEntity> findByIdAndCurrent(Long id, int current);
+
 	List<StudentEntity> findAllBySectionAndSchoolYear(String section, String schoolYear);
 	List<StudentEntity> findAllBySid(String sid);
 	
@@ -30,5 +29,4 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
 	@Query("SELECT s FROM StudentEntity s WHERE s.sid = :sid ORDER BY FUNCTION('SUBSTRING', s.schoolYear, 1, 4) DESC")
 	List<StudentEntity> findStudentsBySidOrderBySchoolYearDesc(@Param("sid") String sid);
 
-	
 }  

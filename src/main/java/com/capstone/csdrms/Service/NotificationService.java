@@ -145,15 +145,6 @@ public class NotificationService {
 	        return userNotificationRepository.findByUser_UserId(userId);
 	    }
 
-	    // Mark a specific notification as view for a specific user
-	    public Optional<UserNotification> markAsViewForUser(Long userId, Long notificationId) {
-	        Optional<UserNotification> userNotification = userNotificationRepository.findByUser_UserIdAndNotification_NotificationId(userId, notificationId);
-	        userNotification.ifPresent(un -> {
-	            un.setViewed(true);
-	            userNotificationRepository.save(un);
-	        });
-	        return userNotification;
-	    }
 	    
 	    public int markAllNotificationsAsViewedForUser(Long userId) {
 	        return userNotificationRepository.markAllAsViewedForUser(userId);

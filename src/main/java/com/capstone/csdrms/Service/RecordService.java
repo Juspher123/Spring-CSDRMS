@@ -62,16 +62,16 @@ public class RecordService {
         UserEntity user = optionalUser.get();
 		activityLogService.logActivity("Insert Record", "A new record has been inserted by "+ user.getUsername()+" for student " + student.getSid() + " (" +student.getName()+")", initiator);
 		
-//		 // 1. Define the notification message
-//        String notificationMessage = "New report created for student " + student.getName() + " (Grade " + student.getGrade() + ", Section " + student.getSection() + ")";
-//
-//        // 2. Set the user types who	 should receive the notification
-//        List<Integer> userTypes = new ArrayList<>();
-//        userTypes.add(1); // Assuming userType 1 should receive the notification
-//        userTypes.add(3); // Assuming userType 3 is for advisers
-//
-//        // 3. Call notification service to create the notification for specific users
-//        notificationService.createNotificationForUserType("Record",savedRecord.getRecordId() ,notificationMessage, userTypes, initiator, student.getGrade(), student.getSection(), student.getSchoolYear());
+		 // 1. Define the notification message
+        String notificationMessage = "New report created for student " + student.getName() + " (Grade " + student.getGrade() + ", Section " + student.getSection() + ")";
+
+        // 2. Set the user types who	 should receive the notification
+        List<Integer> userTypes = new ArrayList<>();
+        userTypes.add(1); // Assuming userType 1 should receive the notification
+        userTypes.add(3); // Assuming userType 3 is for advisers
+
+        // 3. Call notification service to create the notification for specific users
+        notificationService.createNotificationForUserType("Report",savedRecord.getRecordId() ,notificationMessage, userTypes, initiator, student.getGrade(), student.getSection(), student.getSchoolYear());
 		
 		return savedRecord;
 	}

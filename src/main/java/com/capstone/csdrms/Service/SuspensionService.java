@@ -72,9 +72,6 @@ public class SuspensionService {
 		return suspensionRepository.findAll();
 	}
 	
-	public List<SuspensionEntity> getAllSuspensionsByStudentId(Long id){
-		return suspensionRepository.findByRecord_Student_Id(id);
-	}
 	
 	public Optional<SuspensionEntity> getSuspension(Long suspensionId) {
 	    return suspensionRepository.findById(suspensionId);
