@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,6 +52,12 @@ public class NotificationController {
     public ResponseEntity<String> markAllAsViewedForUser(@PathVariable Long userId) {
         int updatedCount = notificationService.markAllNotificationsAsViewedForUser(userId);
         return ResponseEntity.ok("Marked " + updatedCount + " notifications as viewed for user ID: " + userId);
+    }
+    
+    @DeleteMapping("/delete/{userNotificationId}")
+    public ResponseEntity<String> deleteUserNotification(@PathVariable Long userNotificationId) {
+    	notificationService.deleteUserNotification(userNotificationId);
+        return ResponseEntity.ok("User notification deleted successfully");
     }
 
 }

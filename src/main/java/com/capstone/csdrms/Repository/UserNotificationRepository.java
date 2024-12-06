@@ -26,5 +26,7 @@ public interface UserNotificationRepository extends JpaRepository<UserNotificati
     int markAllAsViewedForUser(Long userId);
 
 	List<UserNotification> findByNotification_NotificationId(Long notificationId);
+	
+	void deleteByUserNotificationId(Long userNotificationId);
 
 }

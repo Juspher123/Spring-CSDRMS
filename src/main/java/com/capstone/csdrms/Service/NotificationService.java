@@ -17,6 +17,8 @@ import com.capstone.csdrms.Repository.RecordRepository;
 import com.capstone.csdrms.Repository.UserNotificationRepository;
 import com.capstone.csdrms.Repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class NotificationService {
 
@@ -143,6 +145,11 @@ public class NotificationService {
 	    // Retrieve notifications for a specific user
 	    public List<UserNotification> getNotificationsForUser(Long userId) {
 	        return userNotificationRepository.findByUser_UserId(userId);
+	    }
+	    
+	    @Transactional
+	    public void deleteUserNotification(Long userNotificationId) {
+	        userNotificationRepository.deleteByUserNotificationId(userNotificationId);
 	    }
 
 	    
