@@ -75,6 +75,10 @@ public class RecordService {
 		
 		return savedRecord;
 	}
+	
+	public void insertMultipleRecords(List<RecordEntity> records) {
+        recordRepository.saveAll(records);
+    }
 
 	public List<RecordEntity> getAllStudentRecords(){
 		return recordRepository.findAll();

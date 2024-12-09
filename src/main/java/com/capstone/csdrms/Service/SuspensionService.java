@@ -17,6 +17,7 @@ import com.capstone.csdrms.Repository.SuspensionRepository;
 import com.capstone.csdrms.Repository.RecordRepository;
 import com.capstone.csdrms.Repository.StudentRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -79,29 +80,54 @@ public class SuspensionService {
 
 	
 	
-	
-	 
-	 public void markSuspensionsAsViewedForPrincipal(Long suspensionId, Long initiator) {
-	        Optional<SuspensionEntity> Optionalsuspension = suspensionRepository.findById(suspensionId);
-	        SuspensionEntity suspension = Optionalsuspension.get();
-	        suspension.setViewedByPrincipal(true);
-	        
-	        
-	        // 1. Define the notification message
-	        String notificationMessage = "Principal view the suspension of " + suspension.getRecord().getStudent().getName() + " (Grade " + suspension.getRecord().getStudent().getGrade() + ", Section " + suspension.getRecord().getStudent().getSection() + ")";
+	public void markSuspensionsAsViewedForPrincipal(Long suspensionId, Long initiator) {
+	    Optional<SuspensionEntity> optionalSuspension = suspensionRepository.findById(suspensionId);
 
-	        // 2. Set the user types who should receive the notification
+	    if (optionalSuspension.isPresent()) {
+	        SuspensionEntity suspension = optionalSuspension.get();
+
+	        // Exit early if already viewed
+	        if (suspension.isViewedByPrincipal()) {
+	            return;
+	        }
+
+	        // Set viewedByPrincipal to true
+	        suspension.setViewedByPrincipal(true);
+
+	        // Define the notification message
+	        String notificationMessage = "Principal view the suspension of " 
+	            + suspension.getRecord().getStudent().getName() 
+	            + " (Grade " 
+	            + suspension.getRecord().getStudent().getGrade() 
+	            + ", Section " 
+	            + suspension.getRecord().getStudent().getSection() + ")";
+
+	        // Set the user types who should receive the notification
 	        List<Integer> userTypes = new ArrayList<>();
-	        userTypes.add(1);
-	        userTypes.add(3); 
+	        userTypes.add(1); // Example user types
+	        userTypes.add(3);
 	        userTypes.add(5);
 	        userTypes.add(6);
 
-	        // 3. Call notification service to create the notification for specific users
-	        notificationService.createNotificationForUserType("View Suspension", suspension.getRecordId() ,notificationMessage, userTypes, initiator, suspension.getRecord().getStudent().getGrade(), suspension.getRecord().getStudent().getSection(), suspension.getRecord().getStudent().getSchoolYear());
-	        
+	        // Call notification service to create the notification for specific users
+	        notificationService.createNotificationForUserType(
+	            "View Suspension",
+	            suspension.getRecordId(),
+	            notificationMessage,
+	            userTypes,
+	            initiator,
+	            suspension.getRecord().getStudent().getGrade(),
+	            suspension.getRecord().getStudent().getSection(),
+	            suspension.getRecord().getStudent().getSchoolYear()
+	        );
+
+	        // Save changes to the suspension
 	        suspensionRepository.save(suspension);
-	 }
+	    } else {
+	        throw new EntityNotFoundException("Suspension with ID " + suspensionId + " not found.");
+	    }
+	}
+
 	 
 	  
 	 public Optional<SuspensionEntity> getSuspensionByRecordId(Long recordId) {

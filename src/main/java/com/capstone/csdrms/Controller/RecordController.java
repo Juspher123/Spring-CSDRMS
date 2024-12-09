@@ -34,6 +34,16 @@ public class RecordController {
 		return recordService.insertRecord(studentRecord, initiator);
 	}
 	
+	 @PostMapping("/insertMultipleRecords")
+	    public ResponseEntity<String> insertMultipleRecords(@RequestBody List<RecordEntity> records) {
+	        try {
+	            recordService.insertMultipleRecords(records);
+	            return ResponseEntity.ok("Records inserted successfully");
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to insert records");
+	        }
+	    }
+	
 	@GetMapping("/getAllRecords")
 	public List<RecordEntity> getAllStudentRecords(){
 		return recordService.getAllStudentRecords();

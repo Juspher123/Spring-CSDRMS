@@ -27,6 +27,7 @@ public class RecordEntity {
 	private String incident_date;
 	private String time;
 	private String monitored_record;
+	private int period;
 	private String remarks;
 	private String sanction;
 	private String complainant;
@@ -48,7 +49,7 @@ public class RecordEntity {
 	}
 
 	public RecordEntity(Long recordId, Long id, Long encoderId, String record_date, String incident_date, String time,
-			String monitored_record, String remarks, String sanction, String complainant, String complaint,
+			String monitored_record, int period, String remarks, String sanction, String complainant, String complaint,
 			String investigationDetails, int source, int complete, StudentEntity student, UserEntity encoder) {
 		super();
 		this.recordId = recordId;
@@ -58,6 +59,7 @@ public class RecordEntity {
 		this.incident_date = incident_date;
 		this.time = time;
 		this.monitored_record = monitored_record;
+		this.period = period;
 		this.remarks = remarks;
 		this.sanction = sanction;
 		this.complainant = complainant;
@@ -123,6 +125,14 @@ public class RecordEntity {
 
 	public void setMonitored_record(String monitored_record) {
 		this.monitored_record = monitored_record;
+	}
+
+	public int getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(int period) {
+		this.period = period;
 	}
 
 	public String getRemarks() {
@@ -196,6 +206,8 @@ public class RecordEntity {
 	public void setEncoder(UserEntity encoder) {
 		this.encoder = encoder;
 	}
+
+	
 
 	
 }
