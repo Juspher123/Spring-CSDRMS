@@ -238,13 +238,18 @@ public class StudentService {
 	            }
 	            student.setSid(sid);
 	            
-	            String name = row.getCell(1).getStringCellValue() + ", " + row.getCell(2).getStringCellValue() + " " +  row.getCell(3).getStringCellValue();
-	            
+	            String name = row.getCell(1).getStringCellValue().trim().replaceAll("\\s+", " ") + ", " + row.getCell(2).getStringCellValue().trim().replaceAll("\\s+", " ");
+
+	            if (row.getCell(3) != null && !row.getCell(3).getStringCellValue().trim().isEmpty()) {
+	                name += " " + row.getCell(3).getStringCellValue().trim().replaceAll("\\s+", " ");
+	            }
+
+	             
 	            student.setName(name);
-	            
-	            int gradeNumber;
+	             
+	            int gradeNumber;  
 	            if (row.getCell(5).getCellType() == CellType.NUMERIC) {
-	                // If the cell is of numeric type, cast to int directly
+	                // If the cell is of numeric type, cast to int directly 
 	                gradeNumber = (int) row.getCell(5).getNumericCellValue();
 	            } else if (row.getCell(5).getCellType() == CellType.STRING) {
 	                // If the cell is a string, parse it as an integer
@@ -253,7 +258,7 @@ public class StudentService {
 	                // Handle any unexpected cell type here (optional)
 	                throw new IllegalArgumentException("Unexpected cell type in grade column");
 	            }
-
+ 
 	            // Now you can use gradeNumber as an int
 	            int grade = getGrade(gradeNumber);
 	            student.setGrade(grade);
@@ -285,12 +290,13 @@ public class StudentService {
 	            }
 
 
-	            students.add(student); 
+	            students.add(student);  
 	        }
 	    }
 
 	    studentRepository.saveAll(students);
 	}
+	
 
 
 	

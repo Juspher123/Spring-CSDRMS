@@ -21,7 +21,7 @@ public class RecordEntity {
 	private Long id;
 	
 	//equivalent to userId
-	private Long encoderId;
+	private Long userId;
 	
 	private String record_date;
 	private String incident_date;
@@ -30,6 +30,7 @@ public class RecordEntity {
 	private int period;
 	private String remarks;
 	private String sanction;
+	private String encoder;
 	private String complainant;
 	private String complaint;
 	private String investigationDetails;
@@ -41,20 +42,21 @@ public class RecordEntity {
 	private StudentEntity student;
 	
 	@ManyToOne
-    @JoinColumn(name = "encoderId", referencedColumnName = "userId", insertable = false, updatable = false)
-    private UserEntity encoder;
+    @JoinColumn(name = "userId", referencedColumnName = "userId", insertable = false, updatable = false)
+    private UserEntity user;   
 	
 	public RecordEntity() {
 		super();
 	}
 
-	public RecordEntity(Long recordId, Long id, Long encoderId, String record_date, String incident_date, String time,
-			String monitored_record, int period, String remarks, String sanction, String complainant, String complaint,
-			String investigationDetails, int source, int complete, StudentEntity student, UserEntity encoder) {
+	public RecordEntity(Long recordId, Long id, Long userId, String record_date, String incident_date, String time,
+			String monitored_record, int period, String remarks, String sanction, String encoder, String complainant,
+			String complaint, String investigationDetails, int source, int complete, StudentEntity student,
+			UserEntity user) {
 		super();
 		this.recordId = recordId;
 		this.id = id;
-		this.encoderId = encoderId;
+		this.userId = userId;
 		this.record_date = record_date;
 		this.incident_date = incident_date;
 		this.time = time;
@@ -62,13 +64,14 @@ public class RecordEntity {
 		this.period = period;
 		this.remarks = remarks;
 		this.sanction = sanction;
+		this.encoder = encoder;
 		this.complainant = complainant;
 		this.complaint = complaint;
 		this.investigationDetails = investigationDetails;
 		this.source = source;
 		this.complete = complete;
 		this.student = student;
-		this.encoder = encoder;
+		this.user = user;
 	}
 
 	public Long getRecordId() {
@@ -87,12 +90,12 @@ public class RecordEntity {
 		this.id = id;
 	}
 
-	public Long getEncoderId() {
-		return encoderId;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setEncoderId(Long encoderId) {
-		this.encoderId = encoderId;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public String getRecord_date() {
@@ -151,6 +154,14 @@ public class RecordEntity {
 		this.sanction = sanction;
 	}
 
+	public String getEncoder() {
+		return encoder;
+	}
+
+	public void setEncoder(String encoder) {
+		this.encoder = encoder;
+	}
+
 	public String getComplainant() {
 		return complainant;
 	}
@@ -199,15 +210,13 @@ public class RecordEntity {
 		this.student = student;
 	}
 
-	public UserEntity getEncoder() {
-		return encoder;
+	public UserEntity getUser() {
+		return user;
 	}
 
-	public void setEncoder(UserEntity encoder) {
-		this.encoder = encoder;
+	public void setUser(UserEntity user) {
+		this.user = user;
 	}
 
-	
-
-	
+	 
 }

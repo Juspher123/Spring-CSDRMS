@@ -16,10 +16,10 @@ public interface RecordRepository extends JpaRepository<RecordEntity, Long> {
 	List<RecordEntity> findAllByStudent_Sid(String sid);
 	List<RecordEntity> findAllByStudent_GradeAndStudent_SectionAndStudent_SchoolYear(int grade, String section, String schoolYear);
 	
-	@Query("SELECT r FROM RecordEntity r WHERE (r.student.grade = :grade AND r.student.section = :section AND r.student.schoolYear = :schoolYear) OR r.encoderId = :encoderId")
-	List<RecordEntity> findRecordsByGradeSectionAndSchoolYearOrEncoderId(@Param("grade") int grade, @Param("section") String section, @Param("schoolYear") String schoolYear, @Param("encoderId") Long encoderId);
+	@Query("SELECT r FROM RecordEntity r WHERE (r.student.grade = :grade AND r.student.section = :section AND r.student.schoolYear = :schoolYear) OR r.userId = :userId")
+	List<RecordEntity> findRecordsByGradeSectionAndSchoolYearOrUserId(@Param("grade") int grade, @Param("section") String section, @Param("schoolYear") String schoolYear, @Param("userId") Long userId);
 	
-	List<RecordEntity> findAllByEncoderId(Long encoderId);
+	List<RecordEntity> findAllByUserId(Long userId);
 	
 	List<RecordEntity> findAllByStudent_SidAndStudent_SectionAndStudent_SchoolYear(String sid, String section, String schoolYear);
 	

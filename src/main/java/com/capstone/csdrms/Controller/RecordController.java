@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import com.capstone.csdrms.Entity.RecordEntity;
 import com.capstone.csdrms.Service.RecordService;
@@ -96,13 +96,23 @@ public class RecordController {
 	}
 	
 	@GetMapping("/getRecordsByAdviser")
-	public List<RecordEntity> getAllRecordsByAdviser(@RequestParam int grade, @RequestParam String section,@RequestParam String schoolYear, @RequestParam Long encoderId ) {
-	    return recordService.getAllRecordsByAdviser(grade, section, schoolYear, encoderId);
+	public List<RecordEntity> getAllRecordsByAdviser(@RequestParam int grade, @RequestParam String section,@RequestParam String schoolYear, @RequestParam Long userId ) {
+	    return recordService.getAllRecordsByAdviser(grade, section, schoolYear, userId);
 	}
 	
-	@GetMapping("/getAllRecordsByEncoderId")
-	public List<RecordEntity> getAllRecordsByEncoderId(@RequestParam Long encoderId){
-		return recordService.getAllRecordsByEncoderId(encoderId);
+	@GetMapping("/getAllRecordsByUserId")
+	public List<RecordEntity> getAllRecordsByUserId(@RequestParam Long userId){
+		return recordService.getAllRecordsByUserId(userId);
 	}
 	
+	@PostMapping("/import/{initiator}")
+    public ResponseEntity<?> importRecords(@RequestParam("file") MultipartFile file, @PathVariable Long initiator) {
+        try {
+        	recordService.importRecords(file, initiator);  // Call service to process the Excel file
+            return ResponseEntity.ok("File uploaded and records imported successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file: " + e.getMessage());
+        } 
+    } 
+	 
 }

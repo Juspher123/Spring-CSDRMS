@@ -41,7 +41,7 @@ public class NotificationService {
 	        notification = notificationRepository.save(notification);
 	        
 	        Optional<RecordEntity> recordOptional = recordRepository.findById(recordId);
-	        Long encoderId = recordOptional.get().getEncoderId();
+	        Long userId = recordOptional.get().getUserId();
 	        
 
 	     // Find users by their userType and create UserNotification records
@@ -104,7 +104,7 @@ public class NotificationService {
 	                        }
 	                    });
 		            
-		            	 Optional<UserEntity> encoderAdviser = userRepository.findByUserIdAndDeleted(encoderId, false);
+		            	 Optional<UserEntity> encoderAdviser = userRepository.findByUserIdAndDeleted(userId, false);
 		            	 encoderAdviser.ifPresent(user -> {
 		                        if (!users.contains(user) && user.getUserType() == 3) {  // Avoid duplicate entry
 		                            users.add(user);
@@ -120,7 +120,7 @@ public class NotificationService {
 	            			Optional<UserEntity> optionalUser = userRepository.findByUserTypeAndDeleted(userType, false);
 		            		
 	            			optionalUser.ifPresent(user -> {
-		                        if (!users.contains(user) && user.getUserId().equals(encoderId)) {  
+		                        if (!users.contains(user) && user.getUserId().equals(userId)) {  
 		                            users.add(user);
 		                        }
 		                    });
