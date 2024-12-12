@@ -25,5 +25,9 @@ public interface RecordRepository extends JpaRepository<RecordEntity, Long> {
 	
 	void deleteAllById(Long id);
 	
+	@Query("SELECT COUNT(r) > 0 FROM RecordEntity r WHERE r.record_date = :recordDate AND r.time = :time AND r.student.id = :studentId AND r.monitored_record = :monitoredRecord AND r.remarks = :remarks AND r.sanction = :sanction AND r.encoder = :encoder")
+    boolean existsByUniqueFields(String recordDate, String time, Long studentId, String monitoredRecord, String remarks, String sanction, String encoder);
+
+	
 }
  

@@ -3,9 +3,13 @@ package com.capstone.csdrms.Service;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -35,6 +39,9 @@ import jakarta.transaction.Transactional;
 
 @Service 
 public class RecordService {
+	
+	private int importedCount = 0;
+	private int duplicateCount = 0;
 
 	@Autowired
 	RecordRepository recordRepository;
@@ -123,6 +130,7 @@ public class RecordService {
             existingRecord.setComplainant(updatedRecord.getComplainant());
             existingRecord.setComplaint(updatedRecord.getComplaint());
             existingRecord.setInvestigationDetails(updatedRecord.getInvestigationDetails());
+            existingRecord.setSource(updatedRecord.getSource());
             existingRecord.setComplete(updatedRecord.getComplete());
             
             // Save the updated record
@@ -194,8 +202,10 @@ public class RecordService {
 	    }
 	 
 	 
-	 public void importRecords(MultipartFile file, Long initiator) throws Exception {
+	 public Set<String> importRecords(MultipartFile file, Long initiator) throws Exception {
 		    List<RecordEntity> records = new ArrayList<>();
+		    Set<String> nonExistentStudents = new HashSet<>();
+		    Set<String> duplicateRecords = new HashSet<>();
 		    
 		    try (InputStream is = file.getInputStream(); Workbook workbook = new XSSFWorkbook(is)) {
 		        Sheet sheet = workbook.getSheetAt(1);  // Assuming data is in the first sheet
@@ -209,19 +219,23 @@ public class RecordService {
 		            
 		            record.setRecord_date(getCellValue(row.getCell(1)));
 		            
-		            record.setTime(getCellValue(row.getCell(2)));
+		            record.setTime(getCellValue(row.getCell(2)));  
 		            
-		            Optional<StudentEntity> optionalStudent = studentRepository.findByName(row.getCell(3).getStringCellValue().trim().replaceAll("\\s([,!?])", "$1").replaceAll("\\s+", " "));
+		            String studentName = row.getCell(3).getStringCellValue().trim()
+                            .replaceAll("\\s([,!?])", "$1")
+                            .replaceAll("\\s+", " ");
+		            Optional<StudentEntity> optionalStudent = studentRepository.findByName(studentName);
 		            if(optionalStudent.isPresent()) {
 		            	StudentEntity student = optionalStudent.get();
 		            	record.setId(student.getId());
 		            }  
 		            
 		            else {
-		            	System.out.println(row.getCell(3).getStringCellValue().trim().replaceAll("\\s([,!?])", "$1").replaceAll("\\s+", " ") + " is not existing");
+		            	//System.out.println(studentName + " is not existing");
+		            	nonExistentStudents.add(studentName);
 		            	continue;
 		            }
-		             
+		               
 		            
 		            record.setMonitored_record(getCellValue(row.getCell(4)));
 		            
@@ -231,16 +245,40 @@ public class RecordService {
 		            record.setSanction(getCellValue(row.getCell(6)));
 		            
 		            record.setEncoder(getCellValue(row.getCell(8)));
+		            
+		            
+		            boolean exists = recordRepository.existsByUniqueFields(
+		                    record.getRecord_date(),
+		                    record.getTime(),
+		                    record.getId(),
+		                    record.getMonitored_record(),
+		                    record.getRemarks(),
+		                    record.getSanction(),
+		                    record.getEncoder()
+		                );
+		            
+		            if (exists) {
+		                // Add to duplicates set and skip adding the record to the list
+		                String recordKey = String.join(", ", record.getRecord_date(), record.getTime(), studentName, record.getMonitored_record(), record.getRemarks(), record.getSanction(), record.getEncoder());
+		                duplicateRecords.add(recordKey);
+		                //System.out.println("Duplicate record found: " + recordKey);
+		                continue;  // Skip saving this record
+		            }
 		           		            		            
 
 		            records.add(record); 
 		        }
 		    }
-
+		    
+		    importedCount = records.size();
+		    duplicateCount= duplicateRecords.size();
 		    recordRepository.saveAll(records);
+		    
+		    return nonExistentStudents;
+
 		}
 	 
-	 
+	  
 	 private String truncateRemarks(String remarks, int maxLength) {
 		    if (remarks == null) return "";
 		    return remarks.length() > maxLength ? remarks.substring(0, maxLength) : remarks;
@@ -269,6 +307,16 @@ public class RecordService {
 		            return "";
 		    }  
 		}
+	 
+	 public int getImportedCount() {
+	        return importedCount;
+	    }
+	 
+	 public int getDuplicateCount() {
+	        return duplicateCount;
+	    }
+	 
+	 
 	   
 	 
 

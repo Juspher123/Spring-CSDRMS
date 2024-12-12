@@ -1,6 +1,9 @@
 package com.capstone.csdrms.Controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -106,13 +109,27 @@ public class RecordController {
 	}
 	
 	@PostMapping("/import/{initiator}")
-    public ResponseEntity<?> importRecords(@RequestParam("file") MultipartFile file, @PathVariable Long initiator) {
+	public ResponseEntity<Map<String, Object>> importRecords(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable Long initiator) {
         try {
-        	recordService.importRecords(file, initiator);  // Call service to process the Excel file
-            return ResponseEntity.ok("File uploaded and records imported successfully");
+            // Import records and get non-existent students
+            Set<String> nonExistentStudents = recordService.importRecords(file, initiator);
+            
+            // Prepare the response
+            Map<String, Object> response = new HashMap<>();
+            response.put("importedCount", recordService.getImportedCount()); // Assuming a method to get count
+            response.put("nonExistentStudents", nonExistentStudents);
+            response.put("duplicateCount", recordService.getDuplicateCount());
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file: " + e.getMessage());
+            e.printStackTrace();
+            // Return an error message in case of failure
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Failed to import records. " + e.getMessage()
+            ));
         } 
-    } 
+    }
 	 
 }
