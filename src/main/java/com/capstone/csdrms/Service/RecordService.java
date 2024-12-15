@@ -74,6 +74,17 @@ public class RecordService {
 		StudentEntity student = studentRepository.findById(record.getId())
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 		
+		if(record.getSource() == 1) {
+			 List<RecordEntity> existingRecords = recordRepository.findByRecordDetails(
+			            record.getId(), 
+			            record.getRecord_date(), 
+			            record.getMonitored_record(), 
+			            record.getPeriod());
+
+			    if (!existingRecords.isEmpty()) {
+			        throw new IllegalStateException("Record already exists.");
+			    }
+		}
 		RecordEntity savedRecord = recordRepository.save(record);
 
 		Optional<UserEntity> optionalUser = userRepository.findById(initiator);
@@ -95,8 +106,19 @@ public class RecordService {
 	}
 	
 	public void insertMultipleRecords(List<RecordEntity> records) {
-        recordRepository.saveAll(records);
-    }
+		List<RecordEntity> recordsToSave = new ArrayList<>();
+        for (RecordEntity record : records) {
+            // Check if record exists
+            List<RecordEntity> existingRecords = recordRepository.findByRecordDetails(record.getId(), record.getRecord_date(), record.getMonitored_record(), record.getPeriod());
+            if (existingRecords.isEmpty()) {
+                // If no existing record, add to list to save
+                recordsToSave.add(record);
+            }
+        }
+        if (!recordsToSave.isEmpty()) {
+            recordRepository.saveAll(recordsToSave);
+        }
+    } 
 
 	public List<RecordEntity> getAllStudentRecords(){
 		return recordRepository.findAll();
@@ -124,17 +146,34 @@ public class RecordService {
         if (existingRecordOpt.isPresent()) {
             RecordEntity existingRecord = existingRecordOpt.get();
             
-            existingRecord.setMonitored_record(updatedRecord.getMonitored_record());
-            existingRecord.setRemarks(updatedRecord.getRemarks());
-            existingRecord.setSanction(updatedRecord.getSanction());
-            existingRecord.setComplainant(updatedRecord.getComplainant());
-            existingRecord.setComplaint(updatedRecord.getComplaint());
-            existingRecord.setInvestigationDetails(updatedRecord.getInvestigationDetails());
             existingRecord.setSource(updatedRecord.getSource());
-            existingRecord.setComplete(updatedRecord.getComplete());
+            existingRecord.setMonitored_record(updatedRecord.getMonitored_record());
+            if(updatedRecord.getSource() == 1) {
+            	existingRecord.setRemarks(updatedRecord.getRemarks());
+            	existingRecord.setPeriod(updatedRecord.getPeriod());
+            }
+            else {
+            	existingRecord.setRemarks(null);
+            	existingRecord.setPeriod(0);
+            }
+            existingRecord.setSanction(updatedRecord.getSanction());
             
+            if(updatedRecord.getSource() == 2) {
+            	existingRecord.setComplainant(updatedRecord.getComplainant());
+                existingRecord.setComplaint(updatedRecord.getComplaint());
+                existingRecord.setInvestigationDetails(updatedRecord.getInvestigationDetails());
+                existingRecord.setComplete(updatedRecord.getComplete());
+            }
+            
+            else {
+            	 existingRecord.setComplainant(null);
+                 existingRecord.setComplaint(null);
+                 existingRecord.setInvestigationDetails(null);
+                 existingRecord.setComplete(2);
+            }
+           
             // Save the updated record
-            activityLogService.logActivity("Update Record", "Record " + recordId + " updated by SSO", initator);
+            activityLogService.logActivity("Update Record", "Record " + recordId + " updated by SSO", initator); 
             return recordRepository.save(existingRecord);
         } else {
             throw new Exception("Student record not found with ID: " + recordId);
@@ -199,6 +238,10 @@ public class RecordService {
 	        } else {
 	            throw new RuntimeException("Student record not found for id: " + recordId);
 	        }
+	    }
+	 
+	 public List<RecordEntity> getRecordsByStudentDetailsAndDate(String schoolYear, String grade, String section, String recordDate) {
+	        return recordRepository.findAllByStudentDetailsAndRecordDate(schoolYear, grade, section, recordDate);
 	    }
 	 
 	 

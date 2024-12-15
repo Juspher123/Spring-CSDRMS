@@ -24,7 +24,7 @@ public class ActivityLogService {
         UserEntity user = userRepository.findById(userId)
             .orElse(null); // Fetch user entity, handle null if user not found
         
-        ActivityLogEntity logEntry = new ActivityLogEntity(action, description, LocalDateTime.now(), userId);
+        ActivityLogEntity logEntry = new ActivityLogEntity(action, description, LocalDateTime.now().plusHours(8), userId);
         activityLogRepository.save(logEntry);
     }
 	

@@ -37,7 +37,7 @@ public class RecordController {
 		return recordService.insertRecord(studentRecord, initiator);
 	}
 	
-	 @PostMapping("/insertMultipleRecords")
+	 @PostMapping("/insertMultipleRecords") 
 	    public ResponseEntity<String> insertMultipleRecords(@RequestBody List<RecordEntity> records) {
 	        try {
 	            recordService.insertMultipleRecords(records);
@@ -130,6 +130,16 @@ public class RecordController {
                     "error", "Failed to import records. " + e.getMessage()
             ));
         } 
+    }
+	
+	@GetMapping("/getRecordsByStudentDetails")
+    public List<RecordEntity> getRecordsByStudentDetails(
+        @RequestParam String schoolYear,
+        @RequestParam String grade,
+        @RequestParam String section,
+        @RequestParam String recordDate
+    ) {
+        return recordService.getRecordsByStudentDetailsAndDate(schoolYear, grade, section, recordDate);
     }
 	 
 }

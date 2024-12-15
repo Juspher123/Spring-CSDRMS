@@ -98,9 +98,20 @@ public class UserService {
 	            existingUser.setLastname(updatedUser.getLastname());;
 	            existingUser.setEmail(updatedUser.getEmail());           
 	            if(existingUser.getUserType() == 3) {
-	            	existingUser.setGrade(updatedUser.getGrade());
-		            existingUser.setSection(updatedUser.getSection());
-		            existingUser.setSchoolYear(updatedUser.getSchoolYear());
+	            	Optional<UserEntity> adviserUser = userRepository.findByGradeAndSectionAndSchoolYearAndDeleted(updatedUser.getGrade(), updatedUser.getSection(), updatedUser.getSchoolYear(), false);
+			          
+		            if (adviserUser.isPresent()) {
+		            	UserEntity adviser = adviserUser.get();
+		            	if(adviser.getUserId() != userId) {
+		            		throw new IllegalArgumentException("Adviser with the same grade, section, and school year already exists");	
+		            	}	
+		            }
+		            else {
+		            	existingUser.setGrade(updatedUser.getGrade());
+			            existingUser.setSection(updatedUser.getSection());
+			            existingUser.setSchoolYear(updatedUser.getSchoolYear());
+		            }
+	            	
 	            }
 	            
 	            Optional<UserEntity> optionalUser1 = userRepository.findById(initiator);
