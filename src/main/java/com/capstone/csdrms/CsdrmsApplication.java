@@ -10,6 +10,5 @@ public class CsdrmsApplication {
 		SpringApplication.run(CsdrmsApplication.class, args);
 		System.out.println("Success");
 	}
-        
-} 
- 
+
+}

@@ -1,5 +1,10 @@
 package com.capstone.csdrms.Entity;
 
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,28 +14,28 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="tbluser")
-public class UserEntity {
+@Table(name = "tbluser")
+public class UserEntity implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
-	
+
 	private String username;
 	private String password;
 	private String firstname;
 	private String lastname;
 	private String email;
-	
+
 	private int userType;
-	
+
 	// Fields specific to Adviser, left null for others
-    private Integer grade;
-    private String section;
-    private String schoolYear;
-    
-    private boolean deleted = false;
-    
+	private Integer grade;
+	private String section;
+	private String schoolYear;
+
+	private boolean deleted = false;
+
 	public UserEntity() {
 		super();
 	}
@@ -138,8 +143,29 @@ public class UserEntity {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
-	
-	
 
-	
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return null;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 }

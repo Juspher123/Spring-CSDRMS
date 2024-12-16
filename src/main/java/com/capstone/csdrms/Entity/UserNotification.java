@@ -15,64 +15,59 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class UserNotification {
 
-	 @Id
-	 @GeneratedValue(strategy = GenerationType.IDENTITY)
-	 private Long userNotificationId;
-	 
-	 @ManyToOne
-	 @JoinColumn(name = "userId", nullable = false)
-	  private UserEntity user;
-	 
-	 @ManyToOne
-	 @JoinColumn(name = "notificationId", nullable = false)
-	 private NotificationEntity notification;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long userNotificationId;
 
-//	 @Column(name = "is_read", nullable = false)
-	 private boolean viewed = false;
+	@ManyToOne
+	@JoinColumn(name = "userId", nullable = false)
+	private UserEntity user;
 
-	 public UserNotification() {}
+	@ManyToOne
+	@JoinColumn(name = "notificationId", nullable = false)
+	private NotificationEntity notification;
 
-	    public UserNotification(UserEntity user, NotificationEntity notification) {
-	        this.user = user;
-	        this.notification = notification;
-	        this.viewed = false;
-	    }
+	// @Column(name = "is_read", nullable = false)
+	private boolean viewed = false;
 
-		
+	public UserNotification() {
+	}
 
-		public Long getUserNotificationId() {
-			return userNotificationId;
-		}
+	public UserNotification(UserEntity user, NotificationEntity notification) {
+		this.user = user;
+		this.notification = notification;
+		this.viewed = false;
+	}
 
-		public void setUserNotificationId(Long userNotificationId) {
-			this.userNotificationId = userNotificationId;
-		}
+	public Long getUserNotificationId() {
+		return userNotificationId;
+	}
 
-		public UserEntity getUser() {
-			return user;
-		}
+	public void setUserNotificationId(Long userNotificationId) {
+		this.userNotificationId = userNotificationId;
+	}
 
-		public void setUser(UserEntity user) {
-			this.user = user;
-		}
+	public UserEntity getUser() {
+		return user;
+	}
 
-		public NotificationEntity getNotification() {
-			return notification;
-		}
+	public void setUser(UserEntity user) {
+		this.user = user;
+	}
 
-		public void setNotification(NotificationEntity notification) {
-			this.notification = notification;
-		}
+	public NotificationEntity getNotification() {
+		return notification;
+	}
 
-		public boolean isViewed() {
-			return viewed;
-		}
+	public void setNotification(NotificationEntity notification) {
+		this.notification = notification;
+	}
 
-		public void setViewed(boolean viewed) {
-			this.viewed = viewed;
-		}
+	public boolean isViewed() {
+		return viewed;
+	}
 
-		
-	    
-	 
+	public void setViewed(boolean viewed) {
+		this.viewed = viewed;
+	}
 }
