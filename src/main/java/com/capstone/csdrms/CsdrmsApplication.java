@@ -8,8 +8,7 @@ public class CsdrmsApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CsdrmsApplication.class, args);
-		System.out.println("Success");
+		System.out.println("Success!");
 	}
-        
-} 
- 
+
+}

@@ -1,0 +1,13 @@
+target/
+!.jar
+.git/
+.gitignore
+*.md
+.antigravityignore
+.gemini/
+.idea/
+.mvn/
+mvnw
+mvnw.cmd
+pom.xml.releaseBackup
+release.properties

@@ -14,10 +14,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 public interface UserNotificationRepository extends JpaRepository<UserNotification, Long> {
-	
-	// Fetch notifications for a specific user based on user ID
+
+    // Fetch notifications for a specific user based on user ID
     List<UserNotification> findByUser_UserId(Long userId);
- 
+
     List<UserNotification> findByUser_UserIdAndViewedFalse(Long userId);
 
     @Transactional
@@ -25,8 +25,10 @@ public interface UserNotificationRepository extends JpaRepository<UserNotificati
     @Query("UPDATE UserNotification un SET un.viewed = true WHERE un.user.userId = :userId AND un.viewed = false")
     int markAllAsViewedForUser(Long userId);
 
-	List<UserNotification> findByNotification_NotificationId(Long notificationId);
-	
-	void deleteByUserNotificationId(Long userNotificationId);
+    List<UserNotification> findByNotification_NotificationId(Long notificationId);
+
+    void deleteByUserNotificationId(Long userNotificationId);
+
+    void deleteAllByNotification_NotificationIdIn(List<Long> notificationIds);
 
 }

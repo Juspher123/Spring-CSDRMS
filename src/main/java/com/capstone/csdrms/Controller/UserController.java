@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,43 +19,43 @@ import com.capstone.csdrms.Entity.UserEntity;
 import com.capstone.csdrms.Service.UserService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/user")
 public class UserController {
 
-	@Autowired
+    @Autowired
     UserService userService;
-	
-	@PostMapping("/registerUser")
+
+    @PostMapping("/registerUser")
     public String registerSSO(@RequestBody UserEntity user) {
-		userService.register(user);
+        userService.register(user);
         return "user created successfully";
     }
 
-     
-//    @GetMapping("/getAllAdvisers")
-//    public List<AdviserEntity> getAllAdvisers() {
-//        return userService.getAllAdvisers();
-//    }
-//    
+    // @GetMapping("/getAllAdvisers")
+    // public List<AdviserEntity> getAllAdvisers() {
+    // return userService.getAllAdvisers();
+    // }
+    //
     @GetMapping("/getAllUsers")
     public List<UserEntity> getAllUsers() {
         return userService.getAllUsers();
     }
-    
+
     @PutMapping("/updateUser/{userId}/{initiator}")
-    public ResponseEntity<UserEntity> updateUser(@PathVariable Long userId, @RequestBody UserEntity updatedUser, @PathVariable Long initiator) {
-        
+    public ResponseEntity<UserEntity> updateUser(@PathVariable Long userId, @RequestBody UserEntity updatedUser,
+            @PathVariable Long initiator) {
+
         UserEntity updatedUserEntity = userService.updateUser(userId, updatedUser, initiator);
         return ResponseEntity.ok(updatedUserEntity);
     }
-    
-//    @DeleteMapping("/deleteUser/{username}")
-//    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
-//        userService.deleteUser(username);
-//        return ResponseEntity.noContent().build(); // HTTP 204 No Content response on successful deletion
-//    } 
-    
+
+    // @DeleteMapping("/deleteUser/{username}")
+    // public ResponseEntity<Void> deleteUser(@PathVariable String username) {
+    // userService.deleteUser(username);
+    // return ResponseEntity.noContent().build(); // HTTP 204 No Content response on
+    // successful deletion
+    // }
+
     @DeleteMapping("/deleteUser/{username}/{initiator}")
     public ResponseEntity<String> softDeleteUser(@PathVariable String username, @PathVariable Long initiator) {
         boolean deleted = userService.softDeleteUserByUsername(username, initiator);
@@ -66,7 +65,7 @@ public class UserController {
             return ResponseEntity.status(404).body("User not found.");
         }
     }
-    
+
     @GetMapping("/getPrincipal")
     public ResponseEntity<UserEntity> getPrincipal() {
         try {
@@ -74,19 +73,19 @@ public class UserController {
             return ResponseEntity.ok(principal);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                 .body(null); // or include a custom error message if needed
+                    .body(null); // or include a custom error message if needed
         }
     }
-    
-    
+
     @GetMapping("/adviser")
-    public ResponseEntity<UserEntity> getAdviser(@RequestParam int grade,@RequestParam String section,@RequestParam String schoolYear) {
-    	 Optional<UserEntity> adviser = userService.getAdviser(grade, section, schoolYear);
-         
-         if (adviser.isPresent()) {
-             return ResponseEntity.ok(adviser.get());
-         } else {
-             return ResponseEntity.notFound().build();
-         }
+    public ResponseEntity<UserEntity> getAdviser(@RequestParam int grade, @RequestParam String section,
+            @RequestParam String schoolYear) {
+        Optional<UserEntity> adviser = userService.getAdviser(grade, section, schoolYear);
+
+        if (adviser.isPresent()) {
+            return ResponseEntity.ok(adviser.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

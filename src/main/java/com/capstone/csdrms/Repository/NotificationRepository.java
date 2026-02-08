@@ -8,9 +8,12 @@ import org.springframework.stereotype.Repository;
 import com.capstone.csdrms.Entity.NotificationEntity;
 
 @Repository
-public interface NotificationRepository extends JpaRepository <NotificationEntity, Long>{
+public interface NotificationRepository extends JpaRepository<NotificationEntity, Long> {
 
 	List<NotificationEntity> findByRecordId(Long recordId);
-	
+
+	void deleteByRecordId(Long recordId);
+
+	void deleteAllByRecordIdIn(List<Long> recordIds);
 
 }

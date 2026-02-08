@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,26 +19,26 @@ import com.capstone.csdrms.Entity.UserNotification;
 import com.capstone.csdrms.Service.NotificationService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/notifications")
+@RequestMapping("/notification")
 public class NotificationController {
-	
-	
-	@Autowired
+
+    @Autowired
     private NotificationService notificationService;
 
     // Endpoint to create a notification for specified user types
-//    @PostMapping("/create")
-//    public ResponseEntity<NotificationEntity> createNotification(
-//            @RequestParam String message,
-//            @RequestParam List<Integer> userTypes,
-//            @RequestParam(required = false) Integer grade,
-//            @RequestParam(required = false) String section,
-//            @RequestParam(required = false) String schoolYear) {
-//        
-//        NotificationEntity notification = notificationService.createNotificationForUserType(message, userTypes, grade, section, schoolYear);
-//        return ResponseEntity.ok(notification);
-//    }
+    // @PostMapping("/create")
+    // public ResponseEntity<NotificationEntity> createNotification(
+    // @RequestParam String message,
+    // @RequestParam List<Integer> userTypes,
+    // @RequestParam(required = false) Integer grade,
+    // @RequestParam(required = false) String section,
+    // @RequestParam(required = false) String schoolYear) {
+    //
+    // NotificationEntity notification =
+    // notificationService.createNotificationForUserType(message, userTypes, grade,
+    // section, schoolYear);
+    // return ResponseEntity.ok(notification);
+    // }
 
     // Endpoint to get notifications for a specific user
     @GetMapping("/user/{userId}")
@@ -47,16 +46,16 @@ public class NotificationController {
         List<UserNotification> notifications = notificationService.getNotificationsForUser(userId);
         return ResponseEntity.ok(notifications);
     }
-    
+
     @PostMapping("/user/{userId}/mark-all-as-viewed")
     public ResponseEntity<String> markAllAsViewedForUser(@PathVariable Long userId) {
         int updatedCount = notificationService.markAllNotificationsAsViewedForUser(userId);
         return ResponseEntity.ok("Marked " + updatedCount + " notifications as viewed for user ID: " + userId);
     }
-    
+
     @DeleteMapping("/delete/{userNotificationId}")
     public ResponseEntity<String> deleteUserNotification(@PathVariable Long userNotificationId) {
-    	notificationService.deleteUserNotification(userNotificationId);
+        notificationService.deleteUserNotification(userNotificationId);
         return ResponseEntity.ok("User notification deleted successfully");
     }
 
