@@ -11,6 +11,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${allowed.origin}")
     private String allowedOrigin;
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private ApiKeyInterceptor apiKeyInterceptor;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -18,5 +21,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
+    }
+
+    @Override
+    public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {
+        registry.addInterceptor(apiKeyInterceptor);
     }
 }
