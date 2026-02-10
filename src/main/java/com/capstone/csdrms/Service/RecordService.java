@@ -91,8 +91,8 @@ public class RecordService {
 				+ " for student " + student.getSid() + " (" + student.getName() + ")", initiator);
 
 		// 1. Define the notification message
-		String notificationMessage = "New report created for student " + student.getName() + " (Grade "
-				+ student.getGrade() + ", Section " + student.getSection() + ")";
+		String notificationMessage = "New report created for student <b>" + student.getName() + "</b> (Grade <b>"
+				+ student.getGrade() + "</b>, Section <b>" + student.getSection() + "</b>)";
 
 		// 2. Set the user types who should receive the notification
 		List<Integer> userTypes = new ArrayList<>();

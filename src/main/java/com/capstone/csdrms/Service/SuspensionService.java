@@ -52,7 +52,7 @@ public class SuspensionService {
 	    activityLogService.logActivity("Student Suspension", "Student " + record.getStudent().getSid() + " (" + record.getStudent().getName() + ") has been suspended by SSO", initiator);
 
 	    // Define the notification message
-	    String notificationMessage = "Student " + record.getStudent().getName() + " (Grade " + record.getStudent().getGrade() + ", Section " + record.getStudent().getSection() + ") has been suspended.";
+	    String notificationMessage = "A recommendation for the suspension of Student <b>" + record.getStudent().getName() + "</b> (Grade <b>" + record.getStudent().getGrade() + "</b>, Section <b>" + record.getStudent().getSection() + "</b>) has been submitted and is awaiting approval.";
 
 	    // Set the user types who should receive the notification
 	    List<Integer> userTypes = new ArrayList<>();
@@ -95,12 +95,12 @@ public class SuspensionService {
 	        suspension.setViewedByPrincipal(true);
 
 	        // Define the notification message
-	        String notificationMessage = "Principal view the suspension of " 
+	        String notificationMessage = "Principal view the suspension of <b>" 
 	            + suspension.getRecord().getStudent().getName() 
-	            + " (Grade " 
+	            + "</b> (Grade <b>" 
 	            + suspension.getRecord().getStudent().getGrade() 
-	            + ", Section " 
-	            + suspension.getRecord().getStudent().getSection() + ")";
+	            + "</b>, Section <b>" 
+	            + suspension.getRecord().getStudent().getSection() + "</b>)";
 
 	        // Set the user types who should receive the notification
 	        List<Integer> userTypes = new ArrayList<>();
@@ -186,7 +186,7 @@ public class SuspensionService {
 	            suspensionRepository.save(suspension);
 	            
 	         // 1. Define the notification message
-		        String notificationMessage = "Principal approve the suspension of " + suspension.getRecord().getStudent().getName() + " (Grade " + suspension.getRecord().getStudent().getGrade() + ", Section " + suspension.getRecord().getStudent().getSection() + ")";
+		        String notificationMessage = "The suspension for Student <b>" + suspension.getRecord().getStudent().getName() + "</b> (Grade <b>" + suspension.getRecord().getStudent().getGrade() + "</b>, Section <b>" + suspension.getRecord().getStudent().getSection() + "</b>) has been officially approved and implemented.";
 		        
 		        Optional<RecordEntity> optionalRecord = recordRepository.findById(suspension.getRecordId());
 		        if (optionalRecord.isPresent()) {
