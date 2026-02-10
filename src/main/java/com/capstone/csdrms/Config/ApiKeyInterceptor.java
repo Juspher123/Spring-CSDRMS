@@ -20,11 +20,10 @@ public class ApiKeyInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // Skip API Key check for login endpoint to simplify (optional)
-        // String path = request.getRequestURI();
-        // if (path.contains("/user/login")) {
-        // return true;
-        // }
+        String path = request.getRequestURI();
+        if (path.equals("/health/db")) {
+            return true;
+        }
 
         String requestApiKey = request.getHeader("X-API-KEY");
 
