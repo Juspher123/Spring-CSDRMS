@@ -50,9 +50,22 @@ public class TimeLogService {
 	        return timeLogRepository.save(timeLog);
 	    }
 
-	    public TimeLogEntity updateLogoutTime(Long timelogId, OffsetDateTime logoutTime) {
+	    public TimeLogEntity updateLogoutTime(Long timelogId, Long userId, OffsetDateTime logoutTime) {
 	        TimeLogEntity timeLog = timeLogRepository.findById(timelogId)
 	            .orElseThrow(() -> new RuntimeException("TimeLog not found"));
+	        
+	        if (!timeLog.getUserId().equals(userId)) {
+	        	throw new RuntimeException("TimeLog does not belong to the user");
+	        }
+	        
+	        if (timeLog.getLogoutTime() != null) {
+	        	throw new RuntimeException("TimeLog already closed");
+	        }
+	        
+	        if (logoutTime.isBefore(timeLog.getLoginTime())) {
+	        	throw new RuntimeException("Invalid logout time");
+	        }
+	        
 	        timeLog.setLogoutTime(logoutTime);
 	        long duration = Duration.between(timeLog.getLoginTime(), logoutTime).toMinutes();
 	        timeLog.setDuration(duration);
